@@ -27,8 +27,6 @@
 			return dest;
 		};
 
-		var ObjCreate = Object.create || function(o) { function fn(){}; fn.prototype = o; return new fn; };
-
 		var genSauce = function(fn, existingArgs, argsRemaining){
 			return function(args){
 				var argsGiven = Object.keys(args).filter(notNullOrUndefined, args),
@@ -36,7 +34,7 @@
 
 				// We use `Object.create` to make a new `existingArgs` object
 				// so that each masala'd function is pure
-				existingArgs = merge(ObjCreate(existingArgs), args);
+				existingArgs = merge(Object.create(existingArgs), args);
 
 				if ( nextArgsRemaining.length === 0 ) return fn.call(this, existingArgs);
 
