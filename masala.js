@@ -1,41 +1,55 @@
-var not = function(fn){ return function(){ return !fn.apply(this, arguments); }; };
+(function (root, factory) {
+		if (typeof exports === 'object') {
+			module.exports = factory();
+		} else if (typeof define === 'function' && define.amd) {
+			define(factory);
+		} else {
+			root.masala = factory();
+		}
+	}(this, function () {
+		"use strict";
 
-var nullOrUndefined = function(e){ return this[e] == null; };
-var notNullOrUndefined = not(nullOrUndefined);
+		var not = function(fn){ return function(){ return !fn.apply(this, arguments); }; };
 
-var existsIn = function(e){ return this.indexOf(e) != -1; };
-var doesntExistIn = not(existsIn);
+		var nullOrUndefined = function(e){ return this[e] == null; };
+		var notNullOrUndefined = not(nullOrUndefined);
 
-var merge = function(dest, source){
-	var validKeys = Object.keys(source).filter(notNullOrUndefined, source);
+		var existsIn = function(e){ return this.indexOf(e) != -1; };
+		var doesntExistIn = not(existsIn);
 
-	validKeys.forEach(function(e){
-		dest[e] = source[e];
-	});
+		var merge = function(dest, source){
+			var validKeys = Object.keys(source).filter(notNullOrUndefined, source);
 
-	return dest;
-};
+			validKeys.forEach(function(e){
+				dest[e] = source[e];
+			});
 
-var genSauce = function(fn, existingArgs, argsRemaining){
-	return function(args){
-		var argsGiven = Object.keys(args).filter(notNullOrUndefined, args),
-		    nextArgsRemaining = argsRemaining.filter(doesntExistIn, argsGiven);
+			return dest;
+		};
 
-		// We use `Object.create` to make a new `existingArgs` object
-		// so that each masala'd function is pure
-		existingArgs = merge(Object.create(existingArgs), args);
+		var ObjCreate = Object.create || function(o) { function fn(){}; fn.prototype = o; return new fn; };
 
-		if ( nextArgsRemaining.length === 0 ) return fn.call(this, existingArgs);
+		var genSauce = function(fn, existingArgs, argsRemaining){
+			return function(args){
+				var argsGiven = Object.keys(args).filter(notNullOrUndefined, args),
+				    nextArgsRemaining = argsRemaining.filter(doesntExistIn, argsGiven);
 
-		return genSauce(fn, existingArgs, nextArgsRemaining);
-	};
-};
+				// We use `Object.create` to make a new `existingArgs` object
+				// so that each masala'd function is pure
+				existingArgs = merge(ObjCreate(existingArgs), args);
 
-var masala = function(fn, args){
-	var argsRemaining = Object.keys(args).filter(nullOrUndefined, args),
-	    defaultArgs = merge({}, args);
+				if ( nextArgsRemaining.length === 0 ) return fn.call(this, existingArgs);
 
-	return genSauce(fn, defaultArgs, argsRemaining);
-};
+				return genSauce(fn, existingArgs, nextArgsRemaining);
+			};
+		};
 
-module.exports = masala;
+		var masala = function(fn, args){
+			var argsRemaining = Object.keys(args).filter(nullOrUndefined, args),
+			    defaultArgs = merge({}, args);
+
+			return genSauce(fn, defaultArgs, argsRemaining);
+		};
+
+		return masala;
+}));
