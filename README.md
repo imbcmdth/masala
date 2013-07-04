@@ -7,9 +7,35 @@ Mix the secret sauce of curry-like functionality into your option-objects withou
 
 # install
 
-```bash
+````bash
 npm install masala
-```
+````
+
+..then `require` masala:
+
+````javascript
+var masala = require('masala');
+````
+
+### In the browser, traditional
+
+For the *browser*, add the following to your pages:
+
+````html
+<script src="masala.js"></script>
+````
+
+And the global function `masala` will be available.
+
+### In the browser, using AMD (require.js)
+
+...Or using AMD in the browser:
+
+````javascript
+require(["masala"], function(masala) {
+	// ...
+});
+````
 
 # Usage
 
