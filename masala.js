@@ -1,0 +1,41 @@
+var not = function(fn){ return function(){ return !fn.apply(this, arguments); }; };
+
+var nullOrUndefined = function(e){ return this[e] == null; };
+var notNullOrUndefined = not(nullOrUndefined);
+
+var existsIn = function(e){ return this.indexOf(e) != -1; };
+var doesntExistIn = not(existsIn);
+
+var merge = function(dest, source){
+	var validKeys = Object.keys(source).filter(notNullOrUndefined, source);
+
+	validKeys.forEach(function(e){
+		dest[e] = source[e];
+	});
+
+	return dest;
+};
+
+var genSauce = function(fn, existingArgs, argsRemaining){
+	return function(args){
+		var argsGiven = Object.keys(args).filter(notNullOrUndefined, args),
+		    nextArgsRemaining = argsRemaining.filter(doesntExistIn, argsGiven);
+
+		// We use `Object.create` to make a new `existingArgs` object
+		// so that each masala'd function is pure
+		existingArgs = merge(Object.create(existingArgs), args);
+
+		if ( nextArgsRemaining.length === 0 ) return fn.call(this, existingArgs);
+
+		return genSauce(fn, existingArgs, nextArgsRemaining);
+	};
+};
+
+var masala = function(fn, args){
+	var argsRemaining = Object.keys(args).filter(nullOrUndefined, args),
+	    defaultArgs = merge({}, args);
+
+	return genSauce(fn, defaultArgs, argsRemaining);
+};
+
+module.exports = masala;

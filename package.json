@@ -1,0 +1,39 @@
+{
+  "name": "masala",
+  "description": "curry-like secret sauce for option-object accepting function",
+  "version": "1.0.0",
+  "homepage": "https://github.com/imbcmdth/masala",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/imbcmdth/masala.git"
+  },
+  "author": {
+    "name": "Jon-Carlos Rivera",
+    "email": "jon.carlos.rivera@gmail.com",
+    "url": "http://jon-carlos.com"
+  },
+  "main": "./masala",
+  "devDependencies": {
+    "mocha": "1.8.1"
+  },
+  "testling": {
+    "files": "test/*-test.js",
+    "browsers": [
+      "iexplore/6.0",
+      "iexplore/7.0",
+      "iexplore/8.0",
+      "iexplore/9.0",
+      "iexplore/10.0",
+      "chrome/4.0",
+      "chrome/23.0",
+      "firefox/3.0",
+      "firefox/17.0",
+      "safari/5.0.5",
+      "safari/5.1"
+    ],
+    "harness": "mocha"
+  },
+  "scripts": {
+    "test": "./node_modules/mocha/bin/mocha test"
+  }
+}
