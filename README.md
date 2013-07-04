@@ -5,7 +5,7 @@ Mix the secret sauce of curry-like functionality into your option-objects withou
 
 [![browser support](https://ci.testling.com/imbcmdth/masala.png)](https://ci.testling.com/imbcmdth/masala)
 
-# install
+# Install
 
 ````bash
 npm install masala
@@ -17,7 +17,7 @@ npm install masala
 var masala = require('masala');
 ````
 
-### In the browser, traditional
+### In the browser, traditional <span style="font-size:14px;">[\*note](#note)</span>
 
 For the *browser*, add the following to your pages:
 
@@ -27,7 +27,7 @@ For the *browser*, add the following to your pages:
 
 And the global function `masala` will be available.
 
-### In the browser, using AMD (require.js)
+### In the browser, using AMD (require.js) <span style="font-size:14px;">[\*note](#note)</span>
 
 ...Or using AMD in the browser:
 
@@ -87,8 +87,10 @@ var zipAddWith123 = zipAdd({ a: [1, 2, 3] });
 //-- both functions are usable as you'd expect at any time:
 zipAdd({ a: [1, 2, 3], b: [1, 2, 3] }); //=> [2, 4, 6]
 zipAddWith123({ b: [5, 6, 7] }) //=> [6, 8, 10]
-
 ```
+#### Note
+
+Requires the use of [es5-shim](https://github.com/kriskowal/es5-shim) for compatibility with versions of IEs earlier than IE 9.
 
 ## License - MIT
 
