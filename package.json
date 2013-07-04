@@ -14,7 +14,7 @@
   },
   "main": "./masala",
   "dependencies":{
-    "es5-shim": "2.1.0"
+    "es5-shim": "1.2.10"
   },
   "devDependencies": {
     "mocha": "1.8.1"
