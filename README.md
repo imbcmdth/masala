@@ -3,7 +3,7 @@ MASALA
 
 Mix the secret sauce of curry-like functionality into your option-objects without anything **too spicy**
 
-[![browser support](https://ci.testling.com/hughfdjackson/curry.png)](https://ci.testling.com/hughfdjackson/curry)
+[![browser support](https://ci.testling.com/imbcmdth/masala.png)](https://ci.testling.com/imbcmdth/masala)
 
 # install
 
