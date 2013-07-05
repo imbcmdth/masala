@@ -41,12 +41,12 @@
 			return function (opts) {
 				var argsOffset = +(theTypeOf(opts) === "object");
 
-				// A) Merge remaining arguments
+				// A) Merge arguments
 				var nextArgs = args.concat(toArray(arguments, argsOffset)),
 				    fnLength = fn.length - 1; // remove options-object from length
 
 				if ( argsOffset ) {
-					// B) Merge options arguments
+					// B) Merge options
 					var optsGiven = Object.keys(opts).filter(notNullOrUndefined, opts);
 					var nextOptsRemaining = optsRemaining.filter(doesntExistIn, optsGiven);
 
@@ -57,7 +57,7 @@
 					var nextOptsRemaining = optsRemaining;
 				}
 
-				// If the stars have aligned we apply the result
+				// If the stars have aligned, we apply the result
 				if ( nextOptsRemaining.length === 0 && nextArgs.length >= fnLength ) {
 					if ( nextArgs.length > fnLength ) nextArgs.splice(fnLength);
 

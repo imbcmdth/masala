@@ -37,58 +37,118 @@ require(["masala"], function(masala) {
 });
 ````
 
-# Usage
+# Basic Usage
 
 ```javascript
-function addAB(options) {
+function addAB (options) {
 	return options.a + options.b;
 }
 
-//-- creating a masala'd function is pretty straight
+//-- Creating a masala'd function is pretty straight
 //-- forward:
 var add = masala(addAB, { a: null, b: null });
 
-//.. Simply pass an object that serves as a set of default
-//.. options. Properties set to null become *required* options
-//.. that must be provided (and not null) before the function
-//.. is evaluated.
+//-- Simply pass an object that serves as a set of default
+//-- options. Properties set to null become *required* options
+//-- that must be provided (and not null) before the function
+//-- is evaluated.
 
-//-- it can be called like normal:
+//-- It can be called like normal:
 add({ a: 1, b: 2 }) //=> 3
 
-//-- or, if you leave out any arguments,
+//-- Or, if you leave out any arguments,
 //-- a new function that expects all (or some) of
 //-- the remaining arguments will be created:
 var add1 = add({ a: 1 });
 add1({ b: 2 }) //=> 3
 
-//-- already provided options can be overridden at any time:
+//-- Already provided options can be overridden at any time:
 add1({ a: 2, b: 2 }) //=> 4
+//-- ..giving you default options behavior without adding clutter
+//-- to your functions.
 
-//-- masala knows how many arguments a function should take
-//-- by the number of `null` parameters in the default object
+//-- Masala knows how many options a function should take
+//-- by the number of `null` parameters in the defaults object
 
-//-- in this case, the function expects an object with two arrays is
+//-- In this case, the function expects an object with two arrays is
 //-- expected (a, b).
 //-- `zipWith` will combine two arrays using a function (fn):
-var zipWith = masala(function(opts) {
-	return opts.a.map(function(val, i){ return opts.fn({ a: val, b: opts.b[i] }) });
+var zipWith = masala(function (opts) {
+	return opts.a.map(function (val, i) { return opts.fn({ a: val, b: opts.b[i] }) });
 }, {
 	fn: null,
 	a: null,
 	b: null
 });
 
-//-- if there are still more arguments required, a masala'd function
+//-- If there are still more arguments required, a masala'd function
 //-- will always return a new masala'd function:
 var zipAdd = zipWith({ fn: add });
 var zipAddWith123 = zipAdd({ a: [1, 2, 3] });
 
-//-- both functions are usable as you'd expect at any time:
+//-- Both functions are usable as you'd expect at any time:
 zipAdd({ a: [1, 2, 3], b: [1, 2, 3] }); //=> [2, 4, 6]
 zipAddWith123({ b: [5, 6, 7] }) //=> [6, 8, 10]
 ```
-#### Note
+
+# Advanced Usage
+
+```javascript
+//-- Masala acts like curry for any remaing arguments:
+
+function multiplyDivide (options, denom) {
+	return (options.a * options.b) / denom;
+}
+
+var multDiv = masala(multiplyDivide, { a: null, b: null });
+
+//-- If the first argument isn't an object, it is assumed
+//-- to be one of the remaining arguments:
+var multDivBy2 = multDiv(2);
+multDivBy2({ a: 3, b: 5 }) //=> 7.5
+
+//-- Otherwise, extra arguments after the first object are
+//-- used like you would expect from standard curry-flavoring:
+var multBy2Div3 = multDiv({ a: 2 }, 3);
+multBy2Div3({ b: 6 }) //=> 4
+````
+
+# Crazy Usage
+
+```javascript
+//-- The second argument passed to masala can be a number representing
+//-- the offset of the options object parameter allowing you to use functions
+//-- with an options object that isn't the very first argument.
+
+function chooseAB (a, options, b) {
+	if (options.choice === "a")
+		return a;
+	else
+		return b;
+}
+
+var chooser = masala(chooseAB, 1, { choice: null });
+
+//-- You can curry the options object and create hard-wired choice:
+var chooseA = chooser({ choice: 'a' });
+var chooseB = chooser({ choice: 'b' });
+
+chooseA(1, 2) //=> 1
+chooseB(1, 2) //=> 2
+
+//-- Or you can apply the arguments and leave the options pending:
+var choose12 = chooser(1, 2);
+
+choose12({ choice: 'a' }) //=> 1
+choose12({ choice: 'b' }) //=> 2
+
+//-- Once masala'd the options object is always first and the remaining
+//-- arguments are always applied in order:
+chooser({choice: 'a'}, 'foo', 'bar') //=> 'foo'
+chooser({choice: 'b'}, 'foo', 'bar') //=> 'bar'
+````
+
+### Note
 
 Requires the use of [es5-shim](https://github.com/kriskowal/es5-shim) for compatibility with versions of IEs earlier than IE 9.
 
