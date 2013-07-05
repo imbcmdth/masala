@@ -1,7 +1,7 @@
 {
   "name": "masala",
   "description": "Curry-like secret sauce for option-object accepting function",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "homepage": "https://github.com/imbcmdth/masala",
   "repository": {
     "type": "git",
@@ -32,7 +32,16 @@
       "firefox/3.0",
       "firefox/17.0",
       "safari/5.0.5",
-      "safari/5.1"
+      "safari/5.1",
+      "opera/9.0",
+      "opera/12.0",
+      "firefox/nightly",
+      "opera/next",
+      "chrome/canary",
+      "iphone/6.0",
+      "ipad/6.0",
+      "safari/6.0",
+      "android-browser/4.2"
     ],
     "harness": "mocha"
   },
