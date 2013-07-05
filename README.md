@@ -94,7 +94,7 @@ zipAddWith123({ b: [5, 6, 7] }) //=> [6, 8, 10]
 # Advanced Usage
 
 ```javascript
-//-- Masala acts like curry for any remaing arguments:
+//-- Masala also acts like curry for any remaing arguments after the options
 
 function multiplyDivide (options, denom) {
 	return (options.a * options.b) / denom;
@@ -102,8 +102,8 @@ function multiplyDivide (options, denom) {
 
 var multDiv = masala(multiplyDivide, { a: null, b: null });
 
-//-- If the first argument isn't an object, it is assumed
-//-- to be one of the remaining arguments:
+//-- If the first argument isn't an object, it is assumed to be one of
+//-- the remaining arguments:
 var multDivBy2 = multDiv(2);
 multDivBy2({ a: 3, b: 5 }) //=> 7.5
 
@@ -117,8 +117,9 @@ multBy2Div3({ b: 6 }) //=> 4
 
 ```javascript
 //-- The second argument passed to masala can be a number representing
-//-- the offset of the options object parameter allowing you to use functions
-//-- with an options object that isn't the very first argument.
+//-- the position of the options object in the function's parameters
+//-- allowing you to use functions where the options aren't the very
+//-- first argument.
 
 function chooseAB (a, options, b) {
 	if (options.choice === "a")
@@ -145,10 +146,13 @@ choose12({ choice: 'b' }) //=> 2
 //-- Once masala'd the options object is always first and the remaining
 //-- arguments are always applied in order:
 chooser({choice: 'a'}, 'foo', 'bar') //=> 'foo'
-chooser({choice: 'b'}, 'foo', 'bar') //=> 'bar'
+
+//-- No matter how they are passed:
+chooser({choice: 'b'})('foo', 'bar') //=> 'bar'
+chooser('foo')({choice: 'a'})('bar') //=> 'foo'
 ````
 
-### Note
+## Note
 
 Requires the use of [es5-shim](https://github.com/kriskowal/es5-shim) for compatibility with versions of IEs earlier than IE 9.
 
