@@ -4,6 +4,22 @@ Mix the secret sauce of curry-like functionality into your option-objects withou
 
 [![browser support](https://ci.testling.com/imbcmdth/masala.png)](https://ci.testling.com/imbcmdth/masala)
 
+## Contents
+
+* [Installation](#install)
+
+* [Basic Usage](#basic-usage)
+
+* [Intermediate Usage](#intermediate-usage)
+
+* [Advanced Usage](#advanced-usage)
+
+* [API](#api)
+
+* [What are they saying?](#what-are-they-saying-about-masala)
+
+* [License](#license---mit)
+
 ## Install
 
 ````bash
@@ -90,7 +106,7 @@ zipAdd({ a: [1, 2, 3], b: [1, 2, 3] }); //=> [2, 4, 6]
 zipAddWith123({ b: [5, 6, 7] }) //=> [6, 8, 10]
 ```
 
-## Advanced Usage
+## Intermediate Usage
 
 ```javascript
 //-- Masala also acts like curry for any remaining arguments after the options
@@ -112,7 +128,7 @@ var multBy2Div3 = multDiv({ a: 2 }, 3);
 multBy2Div3({ b: 6 }) //=> 4
 ````
 
-## Crazy Usage
+## Advanced Usage
 
 ```javascript
 //-- The second argument passed to masala can be a number representing
@@ -163,7 +179,7 @@ chooser('foo')({choice: 'a'})('bar') //=> 'foo'
 
 That's it!
 
-## What are *they* saying?
+## What are *they* saying about Masala?
 
 [dwcook](https://github.com/dwcook/): "looks neat"
 
