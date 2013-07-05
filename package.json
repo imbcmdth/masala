@@ -13,34 +13,27 @@
     "url": "http://jon-carlos.com"
   },
   "main": "./masala",
-  "dependencies":{
-    "es5-shim": "1.2.10"
-  },
   "devDependencies": {
     "mocha": "1.8.1"
   },
   "testling": {
     "files": "test/*-test.js",
     "browsers": [
-      "iexplore/6.0",
-      "iexplore/7.0",
-      "iexplore/8.0",
       "iexplore/9.0",
       "iexplore/10.0",
       "chrome/4.0",
       "chrome/23.0",
+      "chrome/canary",
       "firefox/3.0",
       "firefox/17.0",
+      "firefox/nightly",
       "safari/5.0.5",
       "safari/5.1",
-      "opera/9.0",
+      "safari/6.0",
       "opera/12.0",
-      "firefox/nightly",
       "opera/next",
-      "chrome/canary",
       "iphone/6.0",
       "ipad/6.0",
-      "safari/6.0",
       "android-browser/4.2"
     ],
     "harness": "mocha"

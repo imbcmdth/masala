@@ -1,4 +1,3 @@
-require('es5-shim');
 var masala = require('../');
 var a = require('assert');
 

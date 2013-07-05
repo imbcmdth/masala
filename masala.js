@@ -1,6 +1,6 @@
 (function (root, factory) {
 		if (typeof exports === 'object') {
-			module.exports = factory(require('es5-shim'));
+			module.exports = factory();
 		} else if (typeof define === 'function' && define.amd) {
 			define(factory);
 		} else {
@@ -39,6 +39,7 @@
 
 		var genSauce = function (fn, optsPosition, existingOpts, optsRemaining, args) {
 			return function (opts) {
+				// TODO: Should I also check for opts.constructor === Object?
 				var argsOffset = +(theTypeOf(opts) === "object");
 
 				// A) Merge arguments

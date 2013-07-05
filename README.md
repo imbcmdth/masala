@@ -16,7 +16,7 @@ npm install masala
 var masala = require('masala');
 ````
 
-### In the browser, traditional <span style="font-size:14px;">[\*note](#note)</span>
+### In the browser, traditional
 
 For the *browser*, add the following to your pages:
 
@@ -26,7 +26,7 @@ For the *browser*, add the following to your pages:
 
 And the global function `masala` will be available.
 
-### In the browser, using AMD (require.js) <span style="font-size:14px;">[\*note](#note)</span>
+### In the browser, using AMD (require.js)
 
 ...Or using AMD in the browser:
 
@@ -163,10 +163,11 @@ masala(yourFunction[, paramPosition], defaultOptions)
 
 That's it!
 
+<!--
 ## Note
 
 Requires the use of [es5-shim](https://github.com/kriskowal/es5-shim) for compatibility with versions of IEs earlier than IE 9.
-
+-->
 ## License - MIT
 
 > Copyright (C) 2013 Jon-Carlos Rivera
