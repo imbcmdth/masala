@@ -153,13 +153,13 @@ chooser('foo')({choice: 'a'})('bar') //=> 'foo'
 
 ## API
 
-masala(yourFunction[, paramPosition], defaultOptions)
+`masala(yourFunction[, paramPosition], defaultOptions)`
 
 * yourFunction `function` The function to which you wish to add some secret sauce.
 
 * offset `number` [optional] The position in *yourFunction*'s parameter list of the options object argument.
 
-* defaultOptions `object` Any keys set to `null` become required parameters for the options-currying and any other parameters become default options. Default options can always be overridden.
+* defaultOptions `object` Any keys set to `null` become required parameters for the options-currying and any other parameters become default options. Default options can always be overridden later.
 
 That's it!
 
