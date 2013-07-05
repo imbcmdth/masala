@@ -31,6 +31,28 @@ describe('masala', function(){
 		a.deepEqual(reportArgs('a', 'b', 'c', 'd', 'e'), [{ a: 1 }, 'a', 'b']);
 	});
 
+	it('should let you specify a parameter offset for the options object', function(){
+		var reportArgs = masala(function(a, o, b){ return [].slice.call(arguments) }, 1, { a: 1 });
+
+		a.deepEqual(reportArgs('a', 'b'), ['a', { a: 1 },'b']);
+		a.deepEqual(reportArgs('a')('b'), ['a', { a: 1 },'b']);
+	});
+
+	it('should let you specify a parameter offset for the options object', function(){
+		var reportArgs = masala(function(a, o, b){ return [].slice.call(arguments) }, 1, { a: null });
+
+		a.deepEqual(reportArgs({ a: 1 }, 'a', 'b'), ['a', { a: 1 },'b']);
+		a.deepEqual(reportArgs({ a: 1 })('a', 'b'), ['a', { a: 1 },'b']);
+		a.deepEqual(reportArgs({ a: 1 })('a')('b'), ['a', { a: 1 },'b']);
+	});
+
+	it('should curry when the first parameter is not an object', function(){
+		var reportArgs = masala(function(a, o, b){ return [].slice.call(arguments) }, 1, { a: null });
+
+		a.deepEqual(reportArgs('a', 'b')({ a: 1 }), ['a', { a: 1 },'b']);
+		a.deepEqual(reportArgs('a')('b')({ a: 1 }), ['a', { a: 1 },'b']);
+	});
+
 	it('should be pure - each new option should not affect the overall list', function(){
 		var add = masala(function(o){ return o.a + o.b }, { a: null, b: null });
 		var add1 = add({ a: 1 });
@@ -39,6 +61,21 @@ describe('masala', function(){
 		a.equal(add1({ b: 2 }), 3);
 		a.equal(add1({ b: 3 }), 4);
 		a.equal(add1({ b: 4 }), 5);
+
+		a.equal(add2({ a: 1 }), 3);
+		a.equal(add2({ a: 2 }), 4);
+		a.equal(add2({ a: 3 }), 5);
+		a.equal(add2({ a: 4 }), 6);
+	});
+
+	it('should be pure - each new argument should not affect the overall list', function(){
+		var add = masala(function(o, b){ return o.a + b; }, { a: null });
+		var add1 = add({ a: 1 });
+		var add2 = add(2);
+		a.equal(add1(1), 2);
+		a.equal(add1(2), 3);
+		a.equal(add1(3), 4);
+		a.equal(add1(4), 5);
 
 		a.equal(add2({ a: 1 }), 3);
 		a.equal(add2({ a: 2 }), 4);
