@@ -1,6 +1,6 @@
+require('es5-shim');
 var masala = require('../');
 var a = require('assert');
-
 
 describe('masala', function(){
 
@@ -29,13 +29,6 @@ describe('masala', function(){
 		var reportArgs = masala(function(o, a, b){ return [].slice.call(arguments) }, { a: 1 });
 
 		a.deepEqual(reportArgs('a', 'b', 'c', 'd', 'e'), [{ a: 1 }, 'a', 'b']);
-	});
-
-	it('should let you specify a parameter offset for the options object', function(){
-		var reportArgs = masala(function(a, o, b){ return [].slice.call(arguments) }, 1, { a: 1 });
-
-		a.deepEqual(reportArgs('a', 'b'), ['a', { a: 1 },'b']);
-		a.deepEqual(reportArgs('a')('b'), ['a', { a: 1 },'b']);
 	});
 
 	it('should let you specify a parameter offset for the options object', function(){
