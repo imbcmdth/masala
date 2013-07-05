@@ -21,10 +21,10 @@
     "browsers": [
       "iexplore/9.0",
       "iexplore/10.0",
-      "chrome/4.0",
+      "chrome/5.0",
       "chrome/23.0",
       "chrome/canary",
-      "firefox/3.0",
+      "firefox/4.0",
       "firefox/17.0",
       "firefox/nightly",
       "safari/5.0.5",
