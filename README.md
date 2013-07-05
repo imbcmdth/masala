@@ -155,19 +155,20 @@ chooser('foo')({choice: 'a'})('bar') //=> 'foo'
 
 `masala(yourFunction[, paramPosition], defaultOptions)`
 
-* yourFunction `function` The function to which you wish to add some secret sauce.
+* *yourFunction* `function` The function to which you wish to add some secret sauce.
 
-* offset `number` [optional] The position in *yourFunction*'s parameter list of the options object argument.
+* *paramPosition* `number` [optional] The position in *yourFunction*'s parameter list of the options object argument.
 
-* defaultOptions `object` Any keys set to `null` become required parameters for the options-currying and any other parameters become default options. Default options can always be overridden later.
+* *defaultOptions* `object` Any keys set to `null` become required parameters for the options-currying and any other parameters become default options. Default options can always be overridden later.
 
 That's it!
 
-<!--
-## Note
+## What are *they* saying?
 
-Requires the use of [es5-shim](https://github.com/kriskowal/es5-shim) for compatibility with versions of IEs earlier than IE 9.
--->
+[dwcook](https://github.com/dwcook/): "looks neat"
+
+[hughfdjackson](https://github.com/hughfdjackson/): "this is pretty cool"
+
 ## License - MIT
 
 > Copyright (C) 2013 Jon-Carlos Rivera
