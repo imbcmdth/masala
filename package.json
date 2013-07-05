@@ -1,6 +1,6 @@
 {
   "name": "masala",
-  "description": "curry-like secret sauce for option-object accepting function",
+  "description": "Curry-like secret sauce for option-object accepting function",
   "version": "1.0.0",
   "homepage": "https://github.com/imbcmdth/masala",
   "repository": {
@@ -38,5 +38,6 @@
   },
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha test"
-  }
+  },
+  "license": "MIT"
 }

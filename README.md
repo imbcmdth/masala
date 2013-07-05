@@ -56,8 +56,8 @@ var add = masala(addAB, { a: null, b: null });
 //-- it can be called like normal:
 add({ a: 1, b: 2 }) //=> 3
 
-//-- or, if you miss off any arguments,
-//-- a new funtion that expects all (or some) of
+//-- or, if you leave out any arguments,
+//-- a new function that expects all (or some) of
 //-- the remaining arguments will be created:
 var add1 = add({ a: 1 });
 add1({ b: 2 }) //=> 3
