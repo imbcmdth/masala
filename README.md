@@ -1,11 +1,10 @@
-MASALA
-=====
+# MASALA
 
 Mix the secret sauce of curry-like functionality into your option-objects without anything **too spicy**
 
 [![browser support](https://ci.testling.com/imbcmdth/masala.png)](https://ci.testling.com/imbcmdth/masala)
 
-# Install
+## Install
 
 ````bash
 npm install masala
@@ -37,7 +36,7 @@ require(["masala"], function(masala) {
 });
 ````
 
-# Basic Usage
+## Basic Usage
 
 ```javascript
 function addAB (options) {
@@ -91,10 +90,10 @@ zipAdd({ a: [1, 2, 3], b: [1, 2, 3] }); //=> [2, 4, 6]
 zipAddWith123({ b: [5, 6, 7] }) //=> [6, 8, 10]
 ```
 
-# Advanced Usage
+## Advanced Usage
 
 ```javascript
-//-- Masala also acts like curry for any remaing arguments after the options
+//-- Masala also acts like curry for any remaining arguments after the options
 
 function multiplyDivide (options, denom) {
 	return (options.a * options.b) / denom;
@@ -107,18 +106,18 @@ var multDiv = masala(multiplyDivide, { a: null, b: null });
 var multDivBy2 = multDiv(2);
 multDivBy2({ a: 3, b: 5 }) //=> 7.5
 
-//-- Otherwise, extra arguments after the first object are
-//-- used like you would expect from standard curry-flavoring:
+//-- Otherwise, extra arguments after the first object are used like
+//-- you would expect from standard curry-flavoring:
 var multBy2Div3 = multDiv({ a: 2 }, 3);
 multBy2Div3({ b: 6 }) //=> 4
 ````
 
-# Crazy Usage
+## Crazy Usage
 
 ```javascript
 //-- The second argument passed to masala can be a number representing
 //-- the position of the options object in the function's parameters
-//-- allowing you to use functions where the options aren't the very
+//-- allowing you to curry functions where the options aren't the very
 //-- first argument.
 
 function chooseAB (a, options, b) {
@@ -137,7 +136,7 @@ var chooseB = chooser({ choice: 'b' });
 chooseA(1, 2) //=> 1
 chooseB(1, 2) //=> 2
 
-//-- Or you can apply the arguments and leave the options pending:
+//-- Or you can apply the arguments and leave the options object pending:
 var choose12 = chooser(1, 2);
 
 choose12({ choice: 'a' }) //=> 1
@@ -151,6 +150,18 @@ chooser({choice: 'a'}, 'foo', 'bar') //=> 'foo'
 chooser({choice: 'b'})('foo', 'bar') //=> 'bar'
 chooser('foo')({choice: 'a'})('bar') //=> 'foo'
 ````
+
+## API
+
+masala(yourFunction[, paramPosition], defaultOptions)
+
+* yourFunction `function` The function to which you wish to add some secret sauce.
+
+* offset `number` [optional] The position in *yourFunction*'s parameter list of the options object argument.
+
+* defaultOptions `object` Any keys set to `null` become required parameters for the options-currying and any other parameters become default options. Default options can always be overridden.
+
+That's it!
 
 ## Note
 
