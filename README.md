@@ -185,6 +185,8 @@ That's it!
 
 [hughfdjackson](https://github.com/hughfdjackson/): "this is pretty cool"
 
+[gkatsev](https://github.com/gkatsev/): "I give no quotes. Except for money."
+
 ## License - MIT
 
 > Copyright (C) 2013 Jon-Carlos Rivera
