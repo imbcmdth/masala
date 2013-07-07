@@ -40,7 +40,7 @@
 		var genSauce = function (fn, optsPosition, existingOpts, optsRemaining, args) {
 			return function (opts) {
 				// TODO: Should I also check for opts.constructor === Object?
-				var argsOffset = +(theTypeOf(opts) === "object");
+				var argsOffset = +(theTypeOf(opts) === "object" && (opts.constructor === Object || theTypeOf(opts.constructor) === 'undefined'));
 
 				// A) Merge arguments
 				var nextArgs = args.concat(toArray(arguments, argsOffset)),
