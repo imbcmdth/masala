@@ -18,6 +18,8 @@ Mix the secret sauce of curry-like functionality into your option-objects withou
 
 * [What are they saying?](#what-are-they-saying-about-masala)
 
+* [Versions](#versions)
+
 * [License](#license---mit)
 
 ## Install
@@ -186,6 +188,12 @@ That's it!
 [hughfdjackson](https://github.com/hughfdjackson/): "this is pretty cool"
 
 [gkatsev](https://github.com/gkatsev/): "I give no quotes. Except for money."
+
+## Versions
+
+* `v1.1.0` Added support for standard currying of remaining function arguments
+
+* `v1.0.0` Initial functionality
 
 ## License - MIT
 
