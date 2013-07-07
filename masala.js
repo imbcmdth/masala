@@ -53,9 +53,14 @@
 
 				if ( argsOffset ) {
 					// B) Merge options
-					var optsGiven = Object.keys(opts).filter(notNullOrUndefined, opts);
+					var optsGiven = Object.keys(opts)
+						.filter(notNullOrUndefined, opts);
+					var optsReset = Object.keys(opts)
+						.filter(nullOrUndefined, opts);
 
-					nextOptsRemaining = optsRemaining.filter(doesntExistIn, optsGiven);
+					nextOptsRemaining = optsRemaining
+						.filter(doesntExistIn, optsGiven)
+						.concat(optsReset);
 
 					// We use `Object.create` to make a new `existingOpts` object
 					// so that each masala'd function is pure

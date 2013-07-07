@@ -30,6 +30,13 @@ describe('masala', function(){
 		a.deepEqual(reportArgs('a', 'b', 'c', 'd', 'e'), [{ a: 1 }, 'a', 'b']);
 	});
 
+	it('should allow setting already set options to null making them required again', function(){
+		var result = { a: 1, b: 2 };
+		var reportArgs = masala(function(o){ return o; }, { a: 1, b: null });
+
+		a.equal(typeof reportArgs({ a: null, b: 2 }), "function");
+	});
+
 	it('should let you specify a parameter offset for the options object', function(){
 		var reportArgs = masala(function(a, o, b){ return [].slice.call(arguments) }, 1, { a: null });
 
