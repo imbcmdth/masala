@@ -39,31 +39,35 @@
 
 		var genSauce = function (fn, optsPosition, existingOpts, optsRemaining, args) {
 			return function (opts) {
-				// TODO: Should I also check for opts.constructor === Object?
-				var argsOffset = +(theTypeOf(opts) === "object" && (opts.constructor === Object || theTypeOf(opts.constructor) === 'undefined'));
+				// Check to see if the first argument is a plain object
+				var argsOffset = +(optsPosition !== -1
+					&& theTypeOf(opts) === 'object'
+					&& (opts.constructor === Object
+						|| theTypeOf(opts.constructor) === 'undefined'));
 
 				// A) Merge arguments
 				var nextArgs = args.concat(toArray(arguments, argsOffset)),
-				    fnLength = fn.length - 1; // remove options-object from length
+				    fnLength = fn.length - (optsPosition !== -1); // remove options-object from length
+
+				var nextOptsRemaining = optsRemaining;
 
 				if ( argsOffset ) {
 					// B) Merge options
 					var optsGiven = Object.keys(opts).filter(notNullOrUndefined, opts);
-					var nextOptsRemaining = optsRemaining.filter(doesntExistIn, optsGiven);
+
+					nextOptsRemaining = optsRemaining.filter(doesntExistIn, optsGiven);
 
 					// We use `Object.create` to make a new `existingOpts` object
 					// so that each masala'd function is pure
 					existingOpts = merge(Object.create(existingOpts), opts);
-				} else {
-					var nextOptsRemaining = optsRemaining;
 				}
 
 				// If the stars have aligned, we apply the result
-				if ( nextOptsRemaining.length === 0 && nextArgs.length >= fnLength ) {
+				if ( (!nextOptsRemaining || nextOptsRemaining.length === 0) && nextArgs.length >= fnLength ) {
 					if ( nextArgs.length > fnLength ) nextArgs.splice(fnLength);
 
 					// Stick the options object back into the right place
-					nextArgs.splice(optsPosition, 0, existingOpts);
+					if ( optsPosition !== -1 ) nextArgs.splice(optsPosition, 0, existingOpts);
 
 					return fn.apply(this, nextArgs);
 				}
@@ -75,14 +79,22 @@
 		var masala = function (fn, optsPosition, opts) {
 			var args = toArray(arguments, 3);
 
-			if ( theTypeOf(optsPosition) === "object" ) {
+			if ( theTypeOf(optsPosition) === 'object' ) {
 				opts = optsPosition;
 				optsPosition = 0;
 				args = toArray(arguments, 2);
 			}
 
-			var optsRemaining = Object.keys(opts).filter(nullOrUndefined, opts),
-			    defaultOpts = merge({}, opts);
+			if ( theTypeOf(opts) === 'object') {
+				var optsRemaining = Object.keys(opts).filter(nullOrUndefined, opts),
+				    defaultOpts = merge({}, opts);
+			} else {
+				var optsRemaining = null,
+				    defaultOpts = null,
+				    optsPosition = -1;
+
+				args = toArray(arguments, 1);
+			}
 
 			return genSauce(fn, optsPosition, defaultOpts, optsRemaining, args);
 		};

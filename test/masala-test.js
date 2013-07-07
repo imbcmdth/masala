@@ -45,6 +45,33 @@ describe('masala', function(){
 		a.deepEqual(reportArgs('a')('b')({ a: 1 }), ['a', { a: 1 },'b']);
 	});
 
+	it('should masala when the first parameter is a plain object', function(){
+		var reportArgs = masala(function(a, o, b){ return [].slice.call(arguments) }, 1, { a: null });
+
+		var o1 = Object.create(null);
+		o1.a = 1;
+
+		a.deepEqual(reportArgs('a', 'b')(o1), ['a', { a: 1 },'b']);
+		a.deepEqual(reportArgs(o1, 'a')('b'), ['a', { a: 1 },'b']);
+	});
+
+	it('should curry when the first parameter is not a plain object', function(){
+		var reportArgs = masala(function(a, o, b){ return [].slice.call(arguments) }, 1, { a: null });
+
+		function MakeObj(){ this.foo = 'bar'; };
+		var constructedObj = new MakeObj;
+
+		a.deepEqual(reportArgs(constructedObj, 'b')({ a: 1 }), [{ foo: 'bar' }, { a: 1 },'b']);
+		a.deepEqual(reportArgs(constructedObj)('b')({ a: 1 }), [{ foo: 'bar' }, { a: 1 },'b']);
+	});
+
+	it('should ONLY curry when not given a defaults object', function(){
+		var reportArgs = masala(function(a, b, c){ return [].slice.call(arguments) });
+
+		a.deepEqual(reportArgs({ a: 1 }, 'a')('b'), [{ a: 1 }, 'a', 'b']);
+		a.deepEqual(reportArgs('a')('b')({ a: 1 }), ['a', 'b', { a: 1 }]);
+	});
+
 	it('should be pure - each new option should not affect the overall list', function(){
 		var add = masala(function(o){ return o.a + o.b }, { a: null, b: null });
 		var add1 = add({ a: 1 });
