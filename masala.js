@@ -111,9 +111,9 @@
 			    optsRemaining, defaultOpts;
 
 			if ( isPlainObject(optsPosition) ) {
+				args = toArray(arguments, 2);
 				opts = optsPosition;
 				optsPosition = 0;
-				args = toArray(arguments, 2);
 			}
 
 			if ( isPlainObject(opts) ) {
@@ -121,8 +121,8 @@
 				defaultOpts = merge({}, opts);
 				arity--;
 			} else {
-				optsPosition = -1;
 				args = toArray(arguments, 1);
+				optsPosition = -1;
 			}
 
 			arity -= args.length;
