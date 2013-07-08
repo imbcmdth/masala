@@ -22,7 +22,7 @@
 		    isPlainObject = function (o) {
 		    	return (theTypeOf(o) === 'object'
 		    		&& (o.constructor === Object
-		    			|| theTypeOf(o.constructor) === 'undefined'));
+		    			|| typeof o.constructor === 'undefined'));
 		    }
 
 		function merge (dest, source) {
