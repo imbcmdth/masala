@@ -191,6 +191,8 @@ That's it!
 
 ## Versions
 
+* `v1.2.1` Fixed a few small bugs on IE and Safari
+
 * `v1.2.0` The curried function now correctly tracks the arity of remaining arguments and makes available the remaining options-object keys in `function.options`. In other words, the number of arguments and options remaining before the original function will be executed is `function.length + function.options.length`.
 
 * `v1.1.1` The first argument now requires a 'plain object' (in jQuery parlance) ie. just `{}` or `Object.create(null)`
