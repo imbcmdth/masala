@@ -34,37 +34,29 @@ describe('masala', function(){
 		var withOptions = masala(function named(o, a, b){ return toArray(arguments); }, { a: null, b: null });
 
 		a.equal(withOptions.length, 2);
-		a.equal(withOptions.name, 'named');
 		withOptions = withOptions('a');
 
 		a.equal(withOptions.length, 1);
-		a.equal(withOptions.name, 'named');
 		withOptions = withOptions({ a: 1, b: 2 });
 
 		a.equal(withOptions.length, 1);
-		a.equal(withOptions.name, 'named');
-
 		a.deepEqual(withOptions('b'), [{ a: 1, b: 2 }, 'a', 'b']);
 
 		var withOptionsAndOffset = masala(function named(a, o, b){ return toArray(arguments); }, 1, { a: null, b: null });
 
 		a.equal(withOptionsAndOffset.length, 2);
-		a.equal(withOptionsAndOffset.name, 'named');
 		withOptionsAndOffset = withOptionsAndOffset('a');
 
 		a.equal(withOptionsAndOffset.length, 1);
-		a.equal(withOptionsAndOffset.name, 'named');
 		withOptionsAndOffset = withOptionsAndOffset({ a: 1, b: 2 });
 
 		a.equal(withOptionsAndOffset.length, 1);
-		a.equal(withOptionsAndOffset.name, 'named');
 
 		a.deepEqual(withOptionsAndOffset('b'), ['a', { a: 1, b: 2 }, 'b']);
 
 		var justFunction = masala(function named(a, b){ return toArray(arguments); }, 'a');
 
 		a.equal(justFunction.length, 1);
-		a.equal(justFunction.name, 'named');
 
 		a.deepEqual(justFunction('b'), ['a', 'b']);
 	});
