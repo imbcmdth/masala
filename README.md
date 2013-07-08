@@ -1,6 +1,6 @@
 # MASALA
 
-Mix the secret sauce of curry-like functionality into your option-objects without anything **too spicy**
+Mix the secret sauce of curry-like functionality into your function's option-objects without anything **too spicy**
 
 [![browser support](https://ci.testling.com/imbcmdth/masala.png)](https://ci.testling.com/imbcmdth/masala)
 
@@ -23,8 +23,8 @@ Mix the secret sauce of curry-like functionality into your option-objects withou
 * [License](#license---mit)
 
 ## Install
-
 ````bash
+
 npm install masala
 ````
 
@@ -190,6 +190,10 @@ That's it!
 [gkatsev](https://github.com/gkatsev/): "I give no quotes. Except for money."
 
 ## Versions
+
+* `v1.2.0` The curried function now correctly tracks the arity of remaining arguments and makes available the remaining options-object keys in `function.options`. In other words, the number of arguments and options remaining before the original function will be executed is `function.length + function.options.length`.
+
+* `v1.1.1` The first argument now requires a 'plain object' (in jQuery parlance) ie. just `{}` or `Object.create(null)`
 
 * `v1.1.0` Added support for standard currying of remaining function arguments
 
