@@ -1,6 +1,12 @@
 var masala = require('../');
 var a = require('assert');
 
+var slice = Array.prototype.slice;
+
+var toArray = function(args) {
+	return slice.call(args);
+};
+
 describe('masala', function(){
 
 	it('should masala in the I-totally-just-made-this-up sense, taking the arity from the default options', function(){
@@ -24,13 +30,52 @@ describe('masala', function(){
 			sum5C(4)({a: 1})({b: 2})({c: 3}, 5));
 	});
 
+	it('should reduce the arity of the function as it\'s arguments are curried', function(){
+		var withOptions = masala(function named(o, a, b){ return toArray(arguments); }, { a: null, b: null });
+
+		a.equal(withOptions.length, 2);
+		a.equal(withOptions.name, 'named');
+		withOptions = withOptions('a');
+
+		a.equal(withOptions.length, 1);
+		a.equal(withOptions.name, 'named');
+		withOptions = withOptions({ a: 1, b: 2 });
+
+		a.equal(withOptions.length, 1);
+		a.equal(withOptions.name, 'named');
+
+		a.deepEqual(withOptions('b'), [{ a: 1, b: 2 }, 'a', 'b']);
+
+		var withOptionsAndOffset = masala(function named(a, o, b){ return toArray(arguments); }, 1, { a: null, b: null });
+
+		a.equal(withOptionsAndOffset.length, 2);
+		a.equal(withOptionsAndOffset.name, 'named');
+		withOptionsAndOffset = withOptionsAndOffset('a');
+
+		a.equal(withOptionsAndOffset.length, 1);
+		a.equal(withOptionsAndOffset.name, 'named');
+		withOptionsAndOffset = withOptionsAndOffset({ a: 1, b: 2 });
+
+		a.equal(withOptionsAndOffset.length, 1);
+		a.equal(withOptionsAndOffset.name, 'named');
+
+		a.deepEqual(withOptionsAndOffset('b'), ['a', { a: 1, b: 2 }, 'b']);
+
+		var justFunction = masala(function named(a, b){ return toArray(arguments); }, 'a');
+
+		a.equal(justFunction.length, 1);
+		a.equal(justFunction.name, 'named');
+
+		a.deepEqual(justFunction('b'), ['a', 'b']);
+	});
+
 	it('should drop "extra" arguments', function(){
-		var reportArgs = masala(function(o, a, b){ return [].slice.call(arguments) }, { a: 1 });
+		var reportArgs = masala(function(o, a, b){ return toArray(arguments) }, { a: 1 });
 
 		a.deepEqual(reportArgs('a', 'b', 'c', 'd', 'e'), [{ a: 1 }, 'a', 'b']);
 	});
 
-	it('should allow setting already set options to null making them required again', function(){
+	it('should allow setting existing options to null making them required again', function(){
 		var result = { a: 1, b: 2 };
 		var reportArgs = masala(function(o){ return o; }, { a: 1, b: null });
 
@@ -38,7 +83,7 @@ describe('masala', function(){
 	});
 
 	it('should let you specify a parameter offset for the options object', function(){
-		var reportArgs = masala(function(a, o, b){ return [].slice.call(arguments) }, 1, { a: null });
+		var reportArgs = masala(function(a, o, b){ return toArray(arguments) }, 1, { a: null });
 
 		a.deepEqual(reportArgs({ a: 1 }, 'a', 'b'), ['a', { a: 1 },'b']);
 		a.deepEqual(reportArgs({ a: 1 })('a', 'b'), ['a', { a: 1 },'b']);
@@ -46,14 +91,14 @@ describe('masala', function(){
 	});
 
 	it('should curry when the first parameter is not an object', function(){
-		var reportArgs = masala(function(a, o, b){ return [].slice.call(arguments) }, 1, { a: null });
+		var reportArgs = masala(function(a, o, b){ return toArray(arguments) }, 1, { a: null });
 
 		a.deepEqual(reportArgs('a', 'b')({ a: 1 }), ['a', { a: 1 },'b']);
 		a.deepEqual(reportArgs('a')('b')({ a: 1 }), ['a', { a: 1 },'b']);
 	});
 
 	it('should masala when the first parameter is a plain object', function(){
-		var reportArgs = masala(function(a, o, b){ return [].slice.call(arguments) }, 1, { a: null });
+		var reportArgs = masala(function(a, o, b){ return toArray(arguments) }, 1, { a: null });
 
 		var o1 = Object.create(null);
 		o1.a = 1;
@@ -63,7 +108,7 @@ describe('masala', function(){
 	});
 
 	it('should curry when the first parameter is not a plain object', function(){
-		var reportArgs = masala(function(a, o, b){ return [].slice.call(arguments) }, 1, { a: null });
+		var reportArgs = masala(function(a, o, b){ return toArray(arguments) }, 1, { a: null });
 
 		function MakeObj(){ this.foo = 'bar'; };
 		var constructedObj = new MakeObj;
@@ -73,7 +118,7 @@ describe('masala', function(){
 	});
 
 	it('should ONLY curry when not given a defaults object', function(){
-		var reportArgs = masala(function(a, b, c){ return [].slice.call(arguments) });
+		var reportArgs = masala(function(a, b, c){ return toArray(arguments) });
 
 		a.deepEqual(reportArgs({ a: 1 }, 'a')('b'), [{ a: 1 }, 'a', 'b']);
 		a.deepEqual(reportArgs('a')('b')({ a: 1 }), ['a', 'b', { a: 1 }]);

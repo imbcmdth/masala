@@ -8,42 +8,60 @@
 		}
 	}(this, function () {
 		"use strict";
-		var slice = Array.prototype.slice;
-		var call = Function.prototype.call;
-		var toString = Object.prototype.toString;
 
-		var toArray = function () { return call.apply(slice, arguments); }
+		var slice = Array.prototype.slice,
+		    call = Function.prototype.call,
+		    toString = Object.prototype.toString;
 
-		var not = function (fn) { return function() { return !fn.apply(this, arguments); }; };
+		var toArray = function () { return call.apply(slice, arguments); },
+		    not = function (fn) { return function() { return !fn.apply(this, arguments); }; },
+		    nullOrUndefined = function(key) { return this[key] == null; },
+		    notNullOrUndefined = not(nullOrUndefined),
+		    existsIn = function (key) { return this.indexOf(key) != -1; },
+		    doesntExistIn = not(existsIn),
+		    isPlainObject = function (o) {
+		    	return (theTypeOf(o) === 'object'
+		    		&& (o.constructor === Object
+		    			|| theTypeOf(o.constructor) === 'undefined'));
+		    }
 
-		var nullOrUndefined = function(e) { return this[e] == null; };
-		var notNullOrUndefined = not(nullOrUndefined);
+		function merge (dest, source) {
+			var validKeys = Object.keys(source)
+				.filter(notNullOrUndefined, source);
 
-		var existsIn = function (e) { return this.indexOf(e) != -1; };
-		var doesntExistIn = not(existsIn);
-
-		var merge = function (dest, source) {
-			var validKeys = Object.keys(source).filter(notNullOrUndefined, source);
-
-			validKeys.forEach(function (e) {
-				dest[e] = source[e];
+			validKeys.forEach(function (key) {
+				dest[key] = source[key];
 			});
 
 			return dest;
-		};
+		}
 
-		var theTypeOf = function (thing) {
+		function theTypeOf (thing) {
 			var type = toString.call(thing);
 			return type.toLowerCase().match(/^\[object (.+)\]$/)[1];
-		};
+		}
 
-		var genSauce = function (fn, optsPosition, existingOpts, optsRemaining, args) {
-			return function (opts) {
+		function makeArguments (numberOfArgs) {
+			var letters = [];
+			for ( var i = 1; i <= numberOfArgs; i++ ) letters.push("arg" + i);
+			return letters;
+		}
+
+		function wrapFunctionWithArity (arity, name, callback) {
+			var argList = makeArguments(arity);
+			var functionCode = 'return false || function ';
+			functionCode += name + '(';
+			functionCode += argList.join(', ') + ') {\n';
+			functionCode += 'return fn.apply(this, arguments);\n';
+			functionCode += '};'
+
+			return Function("fn", functionCode)(callback);
+		}
+
+		function genSauce (fn, optsPosition, existingOpts, optsRemaining, args, arity) {
+			var sauce = function (opts) {
 				// Check to see if the first argument is a plain object
-				var argsOffset = +(optsPosition !== -1
-					&& theTypeOf(opts) === 'object'
-					&& (opts.constructor === Object
-						|| theTypeOf(opts.constructor) === 'undefined'));
+				var argsOffset = +(optsPosition !== -1 && isPlainObject(opts));
 
 				// A) Merge arguments
 				var nextArgs = args.concat(toArray(arguments, argsOffset)),
@@ -53,10 +71,9 @@
 
 				if ( argsOffset ) {
 					// B) Merge options
-					var optsGiven = Object.keys(opts)
-						.filter(notNullOrUndefined, opts);
-					var optsReset = Object.keys(opts)
-						.filter(nullOrUndefined, opts);
+					var optsKeys = Object.keys(opts),
+					    optsGiven = optsKeys.filter(notNullOrUndefined, opts),
+					    optsReset = optsKeys.filter(nullOrUndefined, opts);
 
 					nextOptsRemaining = optsRemaining
 						.filter(doesntExistIn, optsGiven)
@@ -77,32 +94,41 @@
 					return fn.apply(this, nextArgs);
 				}
 
-				return genSauce(fn, optsPosition, existingOpts, nextOptsRemaining, nextArgs);
+				var remainingArity = Math.max(0, fnLength - nextArgs.length);
+
+				return genSauce(fn, optsPosition, existingOpts, nextOptsRemaining, nextArgs, remainingArity);
 			};
-		};
 
-		var masala = function (fn, optsPosition, opts) {
-			var args = toArray(arguments, 3);
+			var wrappedSauce = wrapFunctionWithArity(arity, fn.name, sauce);
+			wrappedSauce.options = (optsRemaining && optsRemaining.slice()) || [];
 
-			if ( theTypeOf(optsPosition) === 'object' ) {
+			return wrappedSauce;
+		}
+
+		function masala (fn, optsPosition, opts) {
+			var args = toArray(arguments, 3),
+			    arity = fn.length,
+			    optsRemaining, defaultOpts;
+
+			if ( isPlainObject(optsPosition) ) {
 				opts = optsPosition;
 				optsPosition = 0;
 				args = toArray(arguments, 2);
 			}
 
-			if ( theTypeOf(opts) === 'object') {
-				var optsRemaining = Object.keys(opts).filter(nullOrUndefined, opts),
-				    defaultOpts = merge({}, opts);
+			if ( isPlainObject(opts) ) {
+				optsRemaining = Object.keys(opts).filter(nullOrUndefined, opts);
+				defaultOpts = merge({}, opts);
+				arity--;
 			} else {
-				var optsRemaining = null,
-				    defaultOpts = null,
-				    optsPosition = -1;
-
+				optsPosition = -1;
 				args = toArray(arguments, 1);
 			}
 
-			return genSauce(fn, optsPosition, defaultOpts, optsRemaining, args);
-		};
+			arity -= args.length;
+
+			return genSauce(fn, optsPosition, defaultOpts, optsRemaining, args, arity);
+		}
 
 		return masala;
 }));
