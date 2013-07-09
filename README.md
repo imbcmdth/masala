@@ -171,13 +171,15 @@ chooser('foo')({choice: 'a'})('bar') //=> 'foo'
 
 ## API
 
-`masala(yourFunction[, paramPosition], defaultOptions)`
+`masala( yourFunction [[, paramPosition], defaultOptions] )`
 
 * *yourFunction* `function` The function to which you wish to add some secret sauce.
 
 * *paramPosition* `number` [optional] The position in *yourFunction*'s parameter list of the options object argument.
 
 * *defaultOptions* `object` Any keys set to `null` become required parameters for the options-currying and any other parameters become default options. Default options can always be overridden later.
+
+**Note:** If neither `paramPosition` nor `defaultOptions` is provided, then *masala* functions exactly like a traditional curry over all of `yourFunction's` arguments.
 
 That's it!
 
@@ -191,15 +193,15 @@ That's it!
 
 ## Versions
 
-* `v1.2.1` Fixed a few small bugs on IE and Safari
+* [v1.2.1](https://github.com/imbcmdth/masala/archive/v1.2.1.zip) Fixed a few small bugs on IE and Safari
 
-* `v1.2.0` The curried function now correctly tracks the arity of remaining arguments and makes available the remaining options-object keys in `function.options`. In other words, the number of arguments and options remaining before the original function will be executed is `function.length + function.options.length`.
+* [v1.2.0](https://github.com/imbcmdth/masala/archive/v1.2.0.zip) The curried function now correctly tracks the arity of remaining arguments and makes available the remaining options-object keys in `function.options`. In other words, the number of arguments and options remaining before the original function will be executed is `function.length + function.options.length`.
 
-* `v1.1.1` The first argument now requires a 'plain object' (in jQuery parlance) ie. just `{}` or `Object.create(null)`
+* [v1.1.1](https://github.com/imbcmdth/masala/archive/v1.1.1.zip) The first argument now requires a 'plain object' (in jQuery parlance) ie. just `{}` or `Object.create(null)`
 
-* `v1.1.0` Added support for standard currying of remaining function arguments
+* [v1.1.0](https://github.com/imbcmdth/masala/archive/v1.1.0.zip) Added support for standard currying of remaining function arguments
 
-* `v1.0.0` Initial functionality
+* [v1.0.0](https://github.com/imbcmdth/masala/archive/v1.0.0.zip) Initial functionality
 
 ## License - MIT
 
