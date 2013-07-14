@@ -58,7 +58,7 @@
 			return Function("fn", functionCode)(callback);
 		}
 
-		function genSauce (fn, optsPosition, existingOpts, optsRemaining, args, arity) {
+		function genSauce (fn, optsPosition, existingOpts, optsRemaining, args, arity, isConstructor) {
 			var sauce = function (opts) {
 				// Check to see if the first argument is a plain object
 				var argsOffset = +(optsPosition !== -1 && isPlainObject(opts));
@@ -91,12 +91,18 @@
 					// Stick the options object back into the right place
 					if ( optsPosition !== -1 ) nextArgs.splice(optsPosition, 0, existingOpts);
 
-					return fn.apply(this, nextArgs);
+					if ( isConstructor ) {
+						var newObj = Object.create(fn.prototype);
+						var tempObj = fn.apply(newObj, nextArgs);
+						return tempObj || newObj;
+					} else {
+						return fn.apply(this, nextArgs);
+					}
 				}
 
 				var remainingArity = Math.max(0, fnLength - nextArgs.length);
 
-				return genSauce(fn, optsPosition, existingOpts, nextOptsRemaining, nextArgs, remainingArity);
+				return genSauce(fn, optsPosition, existingOpts, nextOptsRemaining, nextArgs, remainingArity, isConstructor);
 			};
 
 			var wrappedSauce = wrapFunctionWithArity(arity, fn.name, sauce);
@@ -108,7 +114,8 @@
 		function masala (fn, optsPosition, opts) {
 			var args = toArray(arguments, 3),
 			    arity = fn.length,
-			    optsRemaining, defaultOpts;
+			    optsRemaining, defaultOpts,
+			    isConstructor = !!(this && this.constructor === masala);
 
 			if ( isPlainObject(optsPosition) ) {
 				args = toArray(arguments, 2);
@@ -127,7 +134,7 @@
 
 			arity -= args.length;
 
-			return genSauce(fn, optsPosition, defaultOpts, optsRemaining, args, arity);
+			return genSauce(fn, optsPosition, defaultOpts, optsRemaining, args, arity, isConstructor);
 		}
 
 		return masala;

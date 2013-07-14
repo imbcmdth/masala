@@ -1,7 +1,7 @@
 {
   "name": "masala",
-  "description": "Curry-like secret sauce for option-object accepting function",
-  "version": "1.2.1",
+  "description": "Curry-like secret sauce for option-object accepting functions and constructors",
+  "version": "1.2.2",
   "homepage": "https://github.com/imbcmdth/masala",
   "repository": {
     "type": "git",
@@ -12,6 +12,15 @@
     "email": "jon.carlos.rivera@gmail.com",
     "url": "http://jon-carlos.com"
   },
+  "keywords": [
+    "functional",
+    "curry",
+    "partial application",
+    "options",
+    "objects",
+    "parameter",
+    "constructor"
+  ],
   "main": "./masala",
   "devDependencies": {
     "mocha": "1.8.1"

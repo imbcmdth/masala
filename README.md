@@ -171,7 +171,7 @@ chooser('foo')({choice: 'a'})('bar') //=> 'foo'
 
 ## API
 
-`masala( yourFunction [[, paramPosition], defaultOptions] )`
+`[new] masala( yourFunction [[, paramPosition], defaultOptions] )`
 
 * *yourFunction* `function` The function to which you wish to add some secret sauce.
 
@@ -179,7 +179,9 @@ chooser('foo')({choice: 'a'})('bar') //=> 'foo'
 
 * *defaultOptions* `object` Any keys set to `null` become required parameters for the options-currying and any other parameters become default options. Default options can always be overridden later.
 
-**Note:** If neither `paramPosition` nor `defaultOptions` is provided, then *masala* functions exactly like a traditional curry over all of `yourFunction's` arguments.
+If neither `paramPosition` nor `defaultOptions` is provided, then *masala* functions exactly like a traditional curry over all of `yourFunction's` arguments.
+
+If `masala` is called as a constructor (ie. with `new`) then it will invoke the first argument as a constructor function. In this way we can use `masala` to curry constructors.
 
 That's it!
 

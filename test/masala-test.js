@@ -154,15 +154,37 @@ describe('masala', function(){
 		a.equal(sum3({ a: 1, b: 2, c: 3 }), sum3({ a: 1 })({ b: 2 })({ c: 3 }));
 	});
 
-	it('should allow allow default options to be passed', function(){
+	it('should allow default options to be passed', function(){
 		var sum3 = masala(function(o){ return o.a + o.b + o.c }, { a: null, b: null, c: 3 });
 
 		a.equal(sum3({ a: 1, b: 2 }), 6);
 	});
 
-	it('should allow allow default options to be overridden', function(){
+	it('should allow default options to be overridden', function(){
 		var sum3 = masala(function(o){ return o.a + o.b + o.c }, { a: 1, b: null, c: 3 });
 
 		a.equal(sum3({ a: 3, b: 2, c: 3 }), 8);
+	});
+
+	it('should allow constructors if called with `new`', function(){
+		var testConstructor = function(o){ this.result = o.a + o.b + o.c; }
+		testConstructor.prototype.other = 'foo';
+
+		var sum3 = new masala(testConstructor, { a: 1, b: null, c: null });
+
+		var obj = sum3({ b: 2 })({ c: 3 });
+
+		a.equal(obj.result, 6);
+		a.equal(obj.other, 'foo');
+	});
+
+	it('should work with (bad) constructors that return values', function(){
+		var testConstructor = function(o){ this.result = o.a + o.b + o.c; return 'foo'; }
+
+		var sum3 = new masala(testConstructor, { a: 1, b: null, c: 3 });
+
+		var obj = sum3({ b: 2 });
+
+		a.equal(obj, 'foo');
 	});
 });
