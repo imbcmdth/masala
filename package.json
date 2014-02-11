@@ -1,7 +1,7 @@
 {
   "name": "masala",
   "description": "Curry-like secret sauce for option-object accepting functions and constructors",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "homepage": "https://github.com/imbcmdth/masala",
   "repository": {
     "type": "git",

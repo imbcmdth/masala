@@ -60,6 +60,7 @@
 
 		function genSauce (fn, optsPosition, existingOpts, optsRemaining, args, arity, isConstructor) {
 			var sauce = function (opts) {
+				var newExistingOpts = existingOpts;
 				// Check to see if the first argument is a plain object
 				var argsOffset = +(optsPosition !== -1 && isPlainObject(opts));
 
@@ -80,8 +81,8 @@
 						.concat(optsReset);
 
 					// We use `Object.create` to make a new `existingOpts` object
-					// so that each masala'd function is pure
-					existingOpts = merge(Object.create(existingOpts), opts);
+					// so that each masala'd function is independent
+					newExistingOpts = merge(Object.create(existingOpts), opts);
 				}
 
 				// If the stars have aligned, we apply the result
@@ -89,11 +90,12 @@
 					if ( nextArgs.length > fnLength ) nextArgs.splice(fnLength);
 
 					// Stick the options object back into the right place
-					if ( optsPosition !== -1 ) nextArgs.splice(optsPosition, 0, existingOpts);
+					if ( optsPosition !== -1 ) nextArgs.splice(optsPosition, 0, newExistingOpts);
 
 					if ( isConstructor ) {
 						var newObj = Object.create(fn.prototype);
 						var tempObj = fn.apply(newObj, nextArgs);
+
 						return tempObj || newObj;
 					} else {
 						return fn.apply(this, nextArgs);
@@ -102,7 +104,7 @@
 
 				var remainingArity = Math.max(0, fnLength - nextArgs.length);
 
-				return genSauce(fn, optsPosition, existingOpts, nextOptsRemaining, nextArgs, remainingArity, isConstructor);
+				return genSauce(fn, optsPosition, newExistingOpts, nextOptsRemaining, nextArgs, remainingArity, isConstructor);
 			};
 
 			var wrappedSauce = wrapFunctionWithArity(arity, fn.name, sauce);

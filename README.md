@@ -195,6 +195,10 @@ That's it!
 
 ## Versions
 
+* [v1.2.3](https://github.com/imbcmdth/masala/archive/v1.2.3.zip) Fixed a bug that was overwriting default options under certain circumstances
+
+* [v1.2.2](https://github.com/imbcmdth/masala/archive/v1.2.2.zip) Added constructor currying with the `new` operator
+
 * [v1.2.1](https://github.com/imbcmdth/masala/archive/v1.2.1.zip) Fixed a few small bugs on IE and Safari
 
 * [v1.2.0](https://github.com/imbcmdth/masala/archive/v1.2.0.zip) The curried function now correctly tracks the arity of remaining arguments and makes available the remaining options-object keys in `function.options`. In other words, the number of arguments and options remaining before the original function will be executed is `function.length + function.options.length`.

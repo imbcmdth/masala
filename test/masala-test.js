@@ -187,4 +187,13 @@ describe('masala', function(){
 
 		a.equal(obj, 'foo');
 	});
+
+
+	it('should not overwrite default object properties that are primitives', function(){
+		var prim = masala(function(o){ return o.a; }, { a: false, b: null});
+
+		var values = [prim({b: 1}), prim({a: true, b: 2}), prim({b: 1})];
+
+		a.deepEqual(values, [false, true, false]);
+	});
 });
