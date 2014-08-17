@@ -216,8 +216,10 @@ describe('masala', function(){
 		a.equal(obj.result, 10);
 		a.equal(obj.other, 'foo');
 	});
+});
 
-	it('should work with masala\'s inherits function', function(){
+describe('masala.inherits', function(){
+	it('should inherit required options from the superConstructor', function(){
 		var testSuperConstructor = function(o){ this.result = o.a + o.b + o.c; }
 		testSuperConstructor.prototype.other = 'foo';
 
@@ -233,6 +235,25 @@ describe('masala', function(){
 		var obj = sum3({ b: 2 })({c: 3 });
 
 		a.equal(obj.result, 10);
+		a.equal(obj.other, 'foo');
+	});
+
+	it('should merge new options with the inherit required options from the superConstructor', function(){
+		var testSuperConstructor = function(o){ this.result = o.a + o.b; }
+		testSuperConstructor.prototype.other = 'foo';
+
+		var superConstructor = new masala(testSuperConstructor, { a: 1, b: null });
+
+		var testConstructor = function(o) {
+			var t = testConstructor.super_.apply(this, arguments);
+			this.result += o.c;
+		}
+
+		var sum3 = masala.inherits(testConstructor, superConstructor, { c: null });
+
+		var obj = sum3({ b: 2 })({c: 3 });
+
+		a.equal(obj.result, 6);
 		a.equal(obj.other, 'foo');
 	});
 });
