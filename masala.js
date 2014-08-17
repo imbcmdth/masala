@@ -9,21 +9,23 @@
 	}(this, function () {
 		"use strict";
 
-		var slice = Array.prototype.slice,
-		    call = Function.prototype.call,
-		    toString = Object.prototype.toString;
+		var slice = Array.prototype.slice;
+		var call = Function.prototype.call;
+		var toString = Object.prototype.toString;
 
-		var toArray = function () { return call.apply(slice, arguments); },
-		    not = function (fn) { return function() { return !fn.apply(this, arguments); }; },
-		    nullOrUndefined = function(key) { return this[key] == null; },
-		    notNullOrUndefined = not(nullOrUndefined),
-		    existsIn = function (key) { return this.indexOf(key) != -1; },
-		    doesntExistIn = not(existsIn),
-		    isPlainObject = function (o) {
-		    	return (theTypeOf(o) === 'object'
-		    		&& (o.constructor === Object
-		    			|| typeof o.constructor === 'undefined'));
-		    }
+		var toArray = function () { return call.apply(slice, arguments); };
+		var not = function (fn) { return function() { return !fn.apply(this, arguments); }; };
+		var nullOrUndefined = function(key) { return this[key] == null; };
+		var notNullOrUndefined = not(nullOrUndefined);
+		var existsIn = function (key) { return this.indexOf(key) != -1; };
+		var doesntExistIn = not(existsIn);
+
+		function isPlainObject (o) {
+			return (theTypeOf(o) === 'object'
+				&& (o.constructor === Object
+					|| typeof o.constructor === 'undefined'));
+		}
+
 
 		function merge (dest, source) {
 			var validKeys = Object.keys(source)
