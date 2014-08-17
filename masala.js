@@ -93,7 +93,11 @@
 					if ( optsPosition !== -1 ) nextArgs.splice(optsPosition, 0, newExistingOpts);
 
 					if ( isConstructor ) {
-						var newObj = Object.create(fn.prototype);
+						if (this instanceof fn) {
+							var newObj = this;
+						} else {
+							var newObj = Object.create(fn.prototype);
+						}
 						var tempObj = fn.apply(newObj, nextArgs);
 
 						return tempObj || newObj;
@@ -109,6 +113,10 @@
 
 			var wrappedSauce = wrapFunctionWithArity(arity, fn.name, sauce);
 			wrappedSauce.options = (optsRemaining && optsRemaining.slice()) || [];
+
+			if (isConstructor) {
+				wrappedSauce.prototype = fn.prototype;
+			}
 
 			return wrappedSauce;
 		}
