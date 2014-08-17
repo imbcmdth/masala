@@ -14,6 +14,8 @@ Mix the secret sauce of curry-like functionality into your function's option-obj
 
 * [Advanced Usage](#advanced-usage)
 
+* [Constructor Usage](#constructor-usage)
+
 * [API](#api)
 
 * [What are they saying?](#what-are-they-saying-about-masala)
@@ -169,6 +171,76 @@ chooser({choice: 'b'})('foo', 'bar') //=> 'bar'
 chooser('foo')({choice: 'a'})('bar') //=> 'foo'
 ````
 
+
+## Constructor Usage
+
+```javascript
+function summer (o) {
+	this.a = o.a;
+	this.b = o.b;
+}
+
+summer.prototype.result = function (c) {
+	return this.a + this.b + c
+};
+
+//-- By using `new` with masala, we tell it that the first argument is
+//-- a constructor
+var summer = new masala(summer, {
+	a: null,
+	b: null
+});
+
+//-- Once all the options for the constructor has been supplied, it executes
+//-- and returns the constructed object as you would expect.
+var sum12 = summer({a: 1, b: 2});
+
+sum12.result(3); //=> 6
+
+````
+
+Masala also supports something very similar to node.js's `util.inherits`:
+
+
+```javascript
+//-- We continue using the same `summer` constructor from above
+
+function sumMore (o) {
+	// Call super constructor
+	sumMore.super_.apply(this, arguments);
+	this.c = o.c;
+}
+
+//-- normally we would export this constructor here:
+// module.exports = masala.inherits(sumMore, summer, { c: null });
+
+//-- But for the purposes of this README we will just assign it to a variable
+var sum = masala.inherits(sumMore, summer, { c: null });
+
+//-- Now we add any prototype functions:
+sumMore.prototype.result = function (d) {
+	return sumMore.super_.prototype.result.call(this, d) + this.c;
+};
+
+//-- Notice how the `sum` function's options have been merged with it's
+//-- superConstructor's options:
+sum.options //=> ['a', 'b', 'c']
+
+var temp = sum({a: 1, c: 3});
+
+//-- The `temp` variable isn't an object since not all of the required options
+//-- have been bound - it is still waiting for `b`.
+
+var finalSumMore = temp({b: 2});
+
+//-- Now it has all of it's required options so the final object has been
+//-- constructed `finalSumMore` is that object.
+
+finalSumMore.result(4); //=> 10
+
+````
+
+
 ## API
 
 `[new] masala( yourFunction [[, paramPosition], defaultOptions] )`
@@ -183,7 +255,16 @@ If neither `paramPosition` nor `defaultOptions` is provided, then *masala* funct
 
 If `masala` is called as a constructor (ie. with `new`) then it will invoke the first argument as a constructor function. In this way we can use `masala` to curry constructors.
 
-That's it!
+
+`newConstructor = masala.inherits( yourConstructor, superConstructor [[, paramPosition], defaultOptions] )`
+
+The options are the same as the base `masala` function's options. The only difference is that this *only* works with constructors and requires the `superConstructor` option (currently does no sanity checking so make sure it's included.)
+
+The returned `newConstructor` is the masala'd constructor that should be exported with `module.exports`.
+
+The `newConstructor` inherits any remaining *required options* from it's `superConstructor` so that calling the `superConstructor` in the constructor fucntion will only happen once all it's *required options* have been specified.
+
+This is probably super confusing so just see [the examples](#constructor-usage).
 
 ## What are *they* saying about Masala?
 
@@ -194,6 +275,8 @@ That's it!
 [gkatsev](https://github.com/gkatsev/): "I give no quotes. Except for money."
 
 ## Versions
+
+* [v1.3.0](https://github.com/imbcmdth/masala/archive/v1.3.0.zip) Implemented `masala.inherits` as a replacement for `util.inherits` that enables building hierarchies of masala'd functions
 
 * [v1.2.3](https://github.com/imbcmdth/masala/archive/v1.2.3.zip) Fixed a bug that was overwriting default options under certain circumstances
 
