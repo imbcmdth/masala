@@ -1,3 +1,4 @@
+var util = require('util');
 var masala = require('../');
 var a = require('assert');
 
@@ -178,7 +179,7 @@ describe('masala', function(){
 		a.equal(obj.other, 'foo');
 	});
 
-	it('should work with (bad) constructors that return values', function(){
+	it('should work with (bad) constructors that explicitly return values', function(){
 		var testConstructor = function(o){ this.result = o.a + o.b + o.c; return 'foo'; }
 
 		var sum3 = new masala(testConstructor, { a: 1, b: null, c: 3 });
@@ -195,5 +196,43 @@ describe('masala', function(){
 		var values = [prim({b: 1}), prim({a: true, b: 2}), prim({b: 1})];
 
 		a.deepEqual(values, [false, true, false]);
+	});
+
+	it('should (somewhat) work with node.js\'s util.inherits function', function(){
+		var testSuperConstructor = function(o){ this.result = o.a + o.b + o.c; }
+		testSuperConstructor.prototype.other = 'foo';
+
+		var superConstructor = new masala(testSuperConstructor, { a: 1, b: null, c: null });
+
+		var testConstructor = function(o) {
+			testConstructor.super_.apply(this, arguments);
+			this.result += 4;
+		}
+
+		util.inherits(testConstructor, superConstructor);
+
+		var obj = new testConstructor({ b: 2, c: 3 });
+
+		a.equal(obj.result, 10);
+		a.equal(obj.other, 'foo');
+	});
+
+	it('should work with masala\'s inherits function', function(){
+		var testSuperConstructor = function(o){ this.result = o.a + o.b + o.c; }
+		testSuperConstructor.prototype.other = 'foo';
+
+		var superConstructor = new masala(testSuperConstructor, { a: 1, b: null, c: null });
+
+		var testConstructor = function(o) {
+			var t = testConstructor.super_.apply(this, arguments);
+			this.result += 4;
+		}
+
+		var sum3 = masala.inherits(testConstructor, superConstructor);
+
+		var obj = sum3({ b: 2 })({c: 3 });
+
+		a.equal(obj.result, 10);
+		a.equal(obj.other, 'foo');
 	});
 });

@@ -26,9 +26,28 @@
 					|| typeof o.constructor === 'undefined'));
 		}
 
+		function getAllKeys (obj) {
+			var keys = [];
+			for (var key in obj) {
+				if (Object.prototype.propertyIsEnumerable.call(obj, key)) {
+					keys.push(key);
+				}
+			}
+			return keys;
+		}
 
 		function merge (dest, source) {
-			var validKeys = Object.keys(source)
+			var validKeys = getAllKeys(source);
+
+			validKeys.forEach(function (key) {
+				dest[key] = source[key];
+			});
+
+			return dest;
+		}
+
+		function mergeNotNull (dest, source) {
+			var validKeys = getAllKeys(source)
 				.filter(notNullOrUndefined, source);
 
 			validKeys.forEach(function (key) {
@@ -74,7 +93,7 @@
 
 				if ( argsOffset ) {
 					// B) Merge options
-					var optsKeys = Object.keys(opts),
+					var optsKeys = getAllKeys(opts),
 					    optsGiven = optsKeys.filter(notNullOrUndefined, opts),
 					    optsReset = optsKeys.filter(nullOrUndefined, opts);
 
@@ -82,9 +101,9 @@
 						.filter(doesntExistIn, optsGiven)
 						.concat(optsReset);
 
-					// We use `Object.create` to make a new `existingOpts` object
+					// We create a fresh new `existingOpts` object
 					// so that each masala'd function is independent
-					newExistingOpts = merge(Object.create(existingOpts), opts);
+					newExistingOpts = mergeNotNull(mergeNotNull({}, existingOpts), opts);
 				}
 
 				// If the stars have aligned, we apply the result
@@ -136,8 +155,8 @@
 			}
 
 			if ( isPlainObject(opts) ) {
-				optsRemaining = Object.keys(opts).filter(nullOrUndefined, opts);
-				defaultOpts = merge({}, opts);
+				optsRemaining = getAllKeys(opts).filter(nullOrUndefined, opts);
+				defaultOpts = mergeNotNull({}, opts);
 				arity--;
 			} else {
 				args = toArray(arguments, 1);
@@ -148,6 +167,45 @@
 
 			return genSauce(fn, optsPosition, defaultOpts, optsRemaining, args, arity, isConstructor);
 		}
+
+		// `masala.inherits` attempts to replicate the functionality of node.js's `util.inherits`
+		// while also allowing curry-like handling of options.
+
+		// To do this, `ctor` inherits any remaining options from `superCtor` so that the
+		// `ctor` isn't executed until it and `superCtor` has all the options they *both*
+		// require.
+		masala.inherits = function (ctor, superCtor, optsPosition, opts) {
+			ctor.super_ = superCtor;
+
+			ctor.prototype = Object.create(superCtor.prototype, {
+				constructor: {
+					value: ctor,
+					enumerable: false,
+					writable: true,
+					configurable: true
+				}
+			});
+
+			if ( isPlainObject(optsPosition) ) {
+				opts = optsPosition;
+				optsPosition = 0;
+			}
+
+			var remainingOptions = superCtor.options || [];
+
+			if (!isPlainObject(opts)) {
+				opts = {};
+			}
+
+			var optionOpts = remainingOptions.reduce(function(obj, key){
+				obj[key] = null;
+				return obj;
+			}, {});
+
+			var mergedOpts = merge(opts, optionOpts);
+
+			return new masala(ctor, optsPosition, mergedOpts);
+		};
 
 		return masala;
 }));
