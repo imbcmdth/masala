@@ -65,11 +65,11 @@ function addAB (options) {
 
 //-- Creating a masala'd function is pretty straight
 //-- forward:
-var add = masala(addAB, { a: null, b: null });
+var add = masala(addAB, { a: undefined, b: undefined });
 
 //-- Simply pass an object that serves as a set of default
-//-- options. Properties set to null become *required* options
-//-- that must be provided (and not null) before the function
+//-- options. Properties set to undefined become *required* options
+//-- that must be provided (and not undefined) before the function
 //-- is evaluated.
 
 //-- It can be called like normal:
@@ -87,7 +87,7 @@ add1({ a: 2, b: 2 }) //=> 4
 //-- to your functions.
 
 //-- Masala knows how many options a function should take
-//-- by the number of `null` parameters in the defaults object
+//-- by the number of `undefined` parameters in the defaults object
 
 //-- In this case, the function expects an object with two arrays is
 //-- expected (a, b).
@@ -95,9 +95,9 @@ add1({ a: 2, b: 2 }) //=> 4
 var zipWith = masala(function (opts) {
 	return opts.a.map(function (val, i) { return opts.fn({ a: val, b: opts.b[i] }) });
 }, {
-	fn: null,
-	a: null,
-	b: null
+	fn: undefined,
+	a: undefined,
+	b: undefined
 });
 
 //-- If there are still more arguments required, a masala'd function
@@ -119,7 +119,7 @@ function multiplyDivide (options, denom) {
 	return (options.a * options.b) / denom;
 }
 
-var multDiv = masala(multiplyDivide, { a: null, b: null });
+var multDiv = masala(multiplyDivide, { a: undefined, b: undefined });
 
 //-- If the first argument isn't an object, it is assumed to be one of
 //-- the remaining arguments:
@@ -147,7 +147,7 @@ function chooseAB (a, options, b) {
 		return b;
 }
 
-var chooser = masala(chooseAB, 1, { choice: null });
+var chooser = masala(chooseAB, 1, { choice: undefined });
 
 //-- You can curry the options object and create hard-wired choice:
 var chooseA = chooser({ choice: 'a' });
@@ -187,8 +187,8 @@ summer.prototype.result = function (c) {
 //-- By using `new` with masala, we tell it that the first argument is
 //-- a constructor
 var summer = new masala(summer, {
-	a: null,
-	b: null
+	a: undefined,
+	b: undefined
 });
 
 //-- Once all the options for the constructor has been supplied, it executes
@@ -212,10 +212,10 @@ function sumMore (o) {
 }
 
 //-- normally we would export this constructor here:
-// module.exports = masala.inherits(sumMore, summer, { c: null });
+// module.exports = masala.inherits(sumMore, summer, { c: undefined });
 
 //-- But for the purposes of this README we will just assign it to a variable
-var sum = masala.inherits(sumMore, summer, { c: null });
+var sum = masala.inherits(sumMore, summer, { c: undefined });
 
 //-- Now we add any prototype functions:
 sumMore.prototype.result = function (d) {
@@ -249,7 +249,7 @@ finalSumMore.result(4); //=> 10
 
 * *paramPosition* `number` [optional] The position in *yourFunction*'s parameter list of the options object argument.
 
-* *defaultOptions* `object` Any keys set to `null` become required parameters for the options-currying and any other parameters become default options. Default options can always be overridden later.
+* *defaultOptions* `object` Any keys set to `undefined` become required parameters for the options-currying and any other parameters become default options. Default options can always be overridden later.
 
 If neither `paramPosition` nor `defaultOptions` is provided, then *masala* functions exactly like a traditional curry over all of `yourFunction's` arguments.
 
@@ -275,6 +275,8 @@ This is probably super confusing so just see [the examples](#constructor-usage).
 [gkatsev](https://github.com/gkatsev/): "I give no quotes. Except for money."
 
 ## Versions
+
+* [v2.0.0](https://github.com/imbcmdth/masala/archive/v2.0.0.zip) Removed support for `null` for specifying an unbound option. Now you MUST use only `undefined` and `null` is considered a proper, bindable, value
 
 * [v1.3.0](https://github.com/imbcmdth/masala/archive/v1.3.0.zip) Implemented `masala.inherits` as a replacement for `util.inherits` that enables building hierarchies of masala'd functions
 

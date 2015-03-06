@@ -15,8 +15,8 @@
 
 		var toArray = function () { return call.apply(slice, arguments); };
 		var not = function (fn) { return function() { return !fn.apply(this, arguments); }; };
-		var nullOrUndefined = function(key) { return this[key] == null; };
-		var notNullOrUndefined = not(nullOrUndefined);
+		var isUndefined = function(key) { return this[key] === undefined; };
+		var notUndefined = not(isUndefined);
 		var existsIn = function (key) { return this.indexOf(key) != -1; };
 		var doesntExistIn = not(existsIn);
 
@@ -48,7 +48,7 @@
 
 		function mergeNotNull (dest, source) {
 			var validKeys = getAllKeys(source)
-				.filter(notNullOrUndefined, source);
+				.filter(notUndefined, source);
 
 			validKeys.forEach(function (key) {
 				dest[key] = source[key];
@@ -94,8 +94,8 @@
 				if ( argsOffset ) {
 					// B) Merge options
 					var optsKeys = getAllKeys(opts),
-					    optsGiven = optsKeys.filter(notNullOrUndefined, opts),
-					    optsReset = optsKeys.filter(nullOrUndefined, opts);
+					    optsGiven = optsKeys.filter(notUndefined, opts),
+					    optsReset = optsKeys.filter(isUndefined, opts);
 
 					nextOptsRemaining = optsRemaining
 						.filter(doesntExistIn, optsGiven)
@@ -155,7 +155,7 @@
 			}
 
 			if ( isPlainObject(opts) ) {
-				optsRemaining = getAllKeys(opts).filter(nullOrUndefined, opts);
+				optsRemaining = getAllKeys(opts).filter(isUndefined, opts);
 				defaultOpts = mergeNotNull({}, opts);
 				arity--;
 			} else {
@@ -198,7 +198,7 @@
 			}
 
 			var optionOpts = remainingOptions.reduce(function(obj, key){
-				obj[key] = null;
+				obj[key] = undefined;
 				return obj;
 			}, {});
 
