@@ -270,9 +270,11 @@ This is probably super confusing so just see [the examples](#constructor-usage).
 
 [dwcook](https://github.com/dwcook/): "looks neat"
 
-[hughfdjackson](https://github.com/hughfdjackson/): "this is pretty cool"
+[ashnur](https://github.com/ashnur): "guess it has its usage"
 
 [gkatsev](https://github.com/gkatsev/): "I give no quotes. Except for money."
+
+[hughfdjackson](https://github.com/hughfdjackson/): "this is pretty cool"
 
 ## Versions
 
