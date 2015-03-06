@@ -276,7 +276,7 @@ This is probably super confusing so just see [the examples](#constructor-usage).
 
 ## Versions
 
-* [v2.0.0](https://github.com/imbcmdth/masala/archive/v2.0.0.zip) Removed support for `null` for specifying an unbound option. Now you MUST use only `undefined` and `null` is considered a proper, bindable, value
+* [v2.0.1](https://github.com/imbcmdth/masala/archive/v2.0.1.zip) Removed support for `null` for specifying an unbound option. Now you MUST use only `undefined` and `null` is considered a proper, bindable, value
 
 * [v1.3.0](https://github.com/imbcmdth/masala/archive/v1.3.0.zip) Implemented `masala.inherits` as a replacement for `util.inherits` that enables building hierarchies of masala'd functions
 
