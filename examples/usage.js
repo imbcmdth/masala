@@ -6,10 +6,10 @@ function addAB(options) {
 
 //-- creating a masala'd function is pretty straight
 //-- forward:
-var add = masala(addAB, { a: null, b: null });
+var add = masala(addAB, { a: undefined, b: undefined });
 //.. Simply pass an object that serves as a set of default
-//.. options. Properties set to null become *required* options
-//.. that must be provided (and not null) before the function
+//.. options. Properties set to undefined become *required* options
+//.. that must be provided (and not undefined) before the function
 //.. is evaluated.
 
 //-- it can be called like normal:
@@ -25,7 +25,7 @@ add1({ b: 2 }) //=> 3
 add1({ a: 2, b: 2 }) //=> 4
 
 //-- masala knows how many arguments a function should take
-//-- by the number of `null` parameters in the default object
+//-- by the number of `undefined` parameters in the default object
 
 //-- in this case, the function expects an object with two arrays is
 //-- expected (a, b).
@@ -33,9 +33,9 @@ add1({ a: 2, b: 2 }) //=> 4
 var zipWith = masala(function(opts) {
 	return opts.a.map(function(val, i){ return opts.fn({ a: val, b: opts.b[i] }) });
 }, {
-	fn: null,
-	a: null,
-	b: null
+	fn: undefined,
+	a: undefined,
+	b: undefined
 });
 
 //-- if there are still more arguments required, a masala'd function

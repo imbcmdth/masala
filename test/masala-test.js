@@ -1,6 +1,12 @@
-var util = require('util');
-var masala = require('../');
-var a = require('assert');
+var util, masala, assert;
+
+// Exclude during in-browser testing with mocha
+// `masala` and `assert` are globally defined in that case
+if (typeof require !== 'undefined') {
+	util = require('util');
+	masala = require('../');
+	assert = require('assert');
+}
 
 var slice = Array.prototype.slice;
 
@@ -13,7 +19,7 @@ describe('masala', function () {
 		var sum5 = function(o){ return o.a + o.b + o.c + o.d + o.e };
 		var sum5C = masala(sum5, { a: undefined, b: undefined, c: undefined, d: undefined, e: undefined });
 
-		a.equal(
+		assert.equal(
 			sum5({ a: 1, b: 2, c: 3, d: 4, e: 5 }),
 			sum5C({a: 1})({b: 2})({c: 3})({d: 4})({e: 5}));
 	});
@@ -22,10 +28,10 @@ describe('masala', function () {
 		var sum5 = function(o, d, e){ return o.a + o.b + o.c + d + e };
 		var sum5C = masala(sum5, { a: undefined, b: undefined, c: undefined });
 
-		a.equal(
+		assert.equal(
 			sum5({ a: 1, b: 2, c: 3 }, 4, 5 ),
 			sum5C({a: 1}, 4)({b: 2})({c: 3})(5));
-		a.equal(
+		assert.equal(
 			sum5({ a: 1, b: 2, c: 3 }, 4, 5 ),
 			sum5C(4)({a: 1})({b: 2})({c: 3}, 5));
 	});
@@ -33,60 +39,60 @@ describe('masala', function () {
 	it('should reduce the arity of the function as it\'s arguments are curried', function () {
 		var withOptions = masala(function named(o, a, b){ return toArray(arguments); }, { a: undefined, b: undefined });
 
-		a.equal(withOptions.length, 2);
+		assert.equal(withOptions.length, 2);
 		withOptions = withOptions('a');
 
-		a.equal(withOptions.length, 1);
+		assert.equal(withOptions.length, 1);
 		withOptions = withOptions({ a: 1, b: 2 });
 
-		a.equal(withOptions.length, 1);
-		a.deepEqual(withOptions('b'), [{ a: 1, b: 2 }, 'a', 'b']);
+		assert.equal(withOptions.length, 1);
+		assert.deepEqual(withOptions('b'), [{ a: 1, b: 2 }, 'a', 'b']);
 
 		var withOptionsAndOffset = masala(function named(a, o, b){ return toArray(arguments); }, 1, { a: undefined, b: undefined });
 
-		a.equal(withOptionsAndOffset.length, 2);
+		assert.equal(withOptionsAndOffset.length, 2);
 		withOptionsAndOffset = withOptionsAndOffset('a');
 
-		a.equal(withOptionsAndOffset.length, 1);
+		assert.equal(withOptionsAndOffset.length, 1);
 		withOptionsAndOffset = withOptionsAndOffset({ a: 1, b: 2 });
 
-		a.equal(withOptionsAndOffset.length, 1);
+		assert.equal(withOptionsAndOffset.length, 1);
 
-		a.deepEqual(withOptionsAndOffset('b'), ['a', { a: 1, b: 2 }, 'b']);
+		assert.deepEqual(withOptionsAndOffset('b'), ['a', { a: 1, b: 2 }, 'b']);
 
 		var justFunction = masala(function named(a, b){ return toArray(arguments); }, 'a');
 
-		a.equal(justFunction.length, 1);
+		assert.equal(justFunction.length, 1);
 
-		a.deepEqual(justFunction('b'), ['a', 'b']);
+		assert.deepEqual(justFunction('b'), ['a', 'b']);
 	});
 
 	it('should drop "extra" arguments', function () {
 		var reportArgs = masala(function(o, a, b){ return toArray(arguments) }, { a: 1 });
 
-		a.deepEqual(reportArgs('a', 'b', 'c', 'd', 'e'), [{ a: 1 }, 'a', 'b']);
+		assert.deepEqual(reportArgs('a', 'b', 'c', 'd', 'e'), [{ a: 1 }, 'a', 'b']);
 	});
 
 	it('should allow setting existing options to undefined making them required again', function () {
 		var result = { a: 1, b: 2 };
 		var reportArgs = masala(function(o){ return o; }, { a: 1, b: undefined });
 
-		a.equal(typeof reportArgs({ a: undefined, b: 2 }), "function");
+		assert.equal(typeof reportArgs({ a: undefined, b: 2 }), "function");
 	});
 
 	it('should let you specify a parameter offset for the options object', function () {
 		var reportArgs = masala(function(a, o, b){ return toArray(arguments) }, 1, { a: undefined });
 
-		a.deepEqual(reportArgs({ a: 1 }, 'a', 'b'), ['a', { a: 1 },'b']);
-		a.deepEqual(reportArgs({ a: 1 })('a', 'b'), ['a', { a: 1 },'b']);
-		a.deepEqual(reportArgs({ a: 1 })('a')('b'), ['a', { a: 1 },'b']);
+		assert.deepEqual(reportArgs({ a: 1 }, 'a', 'b'), ['a', { a: 1 },'b']);
+		assert.deepEqual(reportArgs({ a: 1 })('a', 'b'), ['a', { a: 1 },'b']);
+		assert.deepEqual(reportArgs({ a: 1 })('a')('b'), ['a', { a: 1 },'b']);
 	});
 
 	it('should curry when the first parameter is not an object', function () {
 		var reportArgs = masala(function(a, o, b){ return toArray(arguments) }, 1, { a: undefined });
 
-		a.deepEqual(reportArgs('a', 'b')({ a: 1 }), ['a', { a: 1 },'b']);
-		a.deepEqual(reportArgs('a')('b')({ a: 1 }), ['a', { a: 1 },'b']);
+		assert.deepEqual(reportArgs('a', 'b')({ a: 1 }), ['a', { a: 1 },'b']);
+		assert.deepEqual(reportArgs('a')('b')({ a: 1 }), ['a', { a: 1 },'b']);
 	});
 
 	it('should masala when the first parameter is a plain object', function () {
@@ -95,8 +101,8 @@ describe('masala', function () {
 		var o1 = Object.create(null);
 		o1.a = 1;
 
-		a.deepEqual(reportArgs('a', 'b')(o1), ['a', { a: 1 },'b']);
-		a.deepEqual(reportArgs(o1, 'a')('b'), ['a', { a: 1 },'b']);
+		assert.deepEqual(reportArgs('a', 'b')(o1), ['a', { a: 1 },'b']);
+		assert.deepEqual(reportArgs(o1, 'a')('b'), ['a', { a: 1 },'b']);
 	});
 
 	it('should curry when the first parameter is not a plain object', function () {
@@ -105,65 +111,65 @@ describe('masala', function () {
 		function MakeObj(){ this.foo = 'bar'; };
 		var constructedObj = new MakeObj;
 
-		a.deepEqual(reportArgs(constructedObj, 'b')({ a: 1 }), [{ foo: 'bar' }, { a: 1 },'b']);
-		a.deepEqual(reportArgs(constructedObj)('b')({ a: 1 }), [{ foo: 'bar' }, { a: 1 },'b']);
+		assert.deepEqual(reportArgs(constructedObj, 'b')({ a: 1 }), [{ foo: 'bar' }, { a: 1 },'b']);
+		assert.deepEqual(reportArgs(constructedObj)('b')({ a: 1 }), [{ foo: 'bar' }, { a: 1 },'b']);
 	});
 
 	it('should ONLY curry when not given a defaults object', function () {
 		var reportArgs = masala(function(a, b, c){ return toArray(arguments) });
 
-		a.deepEqual(reportArgs({ a: 1 }, 'a')('b'), [{ a: 1 }, 'a', 'b']);
-		a.deepEqual(reportArgs('a')('b')({ a: 1 }), ['a', 'b', { a: 1 }]);
+		assert.deepEqual(reportArgs({ a: 1 }, 'a')('b'), [{ a: 1 }, 'a', 'b']);
+		assert.deepEqual(reportArgs('a')('b')({ a: 1 }), ['a', 'b', { a: 1 }]);
 	});
 
 	it('should be pure - each new option should not affect the overall list', function () {
 		var add = masala(function(o){ return o.a + o.b }, { a: undefined, b: undefined });
 		var add1 = add({ a: 1 });
 		var add2 = add({ b: 2 });
-		a.equal(add1({ b: 1 }), 2);
-		a.equal(add1({ b: 2 }), 3);
-		a.equal(add1({ b: 3 }), 4);
-		a.equal(add1({ b: 4 }), 5);
+		assert.equal(add1({ b: 1 }), 2);
+		assert.equal(add1({ b: 2 }), 3);
+		assert.equal(add1({ b: 3 }), 4);
+		assert.equal(add1({ b: 4 }), 5);
 
-		a.equal(add2({ a: 1 }), 3);
-		a.equal(add2({ a: 2 }), 4);
-		a.equal(add2({ a: 3 }), 5);
-		a.equal(add2({ a: 4 }), 6);
+		assert.equal(add2({ a: 1 }), 3);
+		assert.equal(add2({ a: 2 }), 4);
+		assert.equal(add2({ a: 3 }), 5);
+		assert.equal(add2({ a: 4 }), 6);
 	});
 
 	it('should be pure - each new argument should not affect the overall list', function () {
 		var add = masala(function(o, b){ return o.a + b; }, { a: undefined });
 		var add1 = add({ a: 1 });
 		var add2 = add(2);
-		a.equal(add1(1), 2);
-		a.equal(add1(2), 3);
-		a.equal(add1(3), 4);
-		a.equal(add1(4), 5);
+		assert.equal(add1(1), 2);
+		assert.equal(add1(2), 3);
+		assert.equal(add1(3), 4);
+		assert.equal(add1(4), 5);
 
-		a.equal(add2({ a: 1 }), 3);
-		a.equal(add2({ a: 2 }), 4);
-		a.equal(add2({ a: 3 }), 5);
-		a.equal(add2({ a: 4 }), 6);
+		assert.equal(add2({ a: 1 }), 3);
+		assert.equal(add2({ a: 2 }), 4);
+		assert.equal(add2({ a: 3 }), 5);
+		assert.equal(add2({ a: 4 }), 6);
 	});
 
 	it('should allow multiple options to be passed at a time', function () {
 		var sum3 = masala(function(o){ return o.a + o.b + o.c }, { a: undefined, b: undefined, c: undefined });
 
-		a.equal(sum3({ a: 1, b: 2, c: 3 }), sum3({ a: 1, b: 2 })({ c: 3 }));
-		a.equal(sum3({ a: 1, b: 2, c: 3 }), sum3({ a: 1 })({ b: 2, c: 3 }));
-		a.equal(sum3({ a: 1, b: 2, c: 3 }), sum3({ a: 1 })({ b: 2 })({ c: 3 }));
+		assert.equal(sum3({ a: 1, b: 2, c: 3 }), sum3({ a: 1, b: 2 })({ c: 3 }));
+		assert.equal(sum3({ a: 1, b: 2, c: 3 }), sum3({ a: 1 })({ b: 2, c: 3 }));
+		assert.equal(sum3({ a: 1, b: 2, c: 3 }), sum3({ a: 1 })({ b: 2 })({ c: 3 }));
 	});
 
 	it('should allow default options to be passed', function () {
 		var sum3 = masala(function(o){ return o.a + o.b + o.c }, { a: undefined, b: undefined, c: 3 });
 
-		a.equal(sum3({ a: 1, b: 2 }), 6);
+		assert.equal(sum3({ a: 1, b: 2 }), 6);
 	});
 
 	it('should allow default options to be overridden', function () {
 		var sum3 = masala(function(o){ return o.a + o.b + o.c }, { a: 1, b: undefined, c: 3 });
 
-		a.equal(sum3({ a: 3, b: 2, c: 3 }), 8);
+		assert.equal(sum3({ a: 3, b: 2, c: 3 }), 8);
 	});
 
 	it('should allow constructors if called with `new`', function () {
@@ -174,8 +180,8 @@ describe('masala', function () {
 
 		var obj = sum3({ b: 2 })({ c: 3 });
 
-		a.equal(obj.result, 6);
-		a.equal(obj.other, 'foo');
+		assert.equal(obj.result, 6);
+		assert.equal(obj.other, 'foo');
 	});
 
 	it('should work with (bad) constructors that explicitly return values', function () {
@@ -185,7 +191,7 @@ describe('masala', function () {
 
 		var obj = sum3({ b: 2 });
 
-		a.equal(obj, 'foo');
+		assert.equal(obj, 'foo');
 	});
 
 
@@ -194,40 +200,43 @@ describe('masala', function () {
 
 		var values = [prim({b: 1}), prim({a: true, b: 2}), prim({b: 1})];
 
-		a.deepEqual(values, [false, true, false]);
+		assert.deepEqual(values, [false, true, false]);
 	});
 
-	it('should (somewhat) work with node.js\'s util.inherits function', function () {
-		var testSuperConstructor = function(o){ this.result = o.a + o.b + o.c; }
-		testSuperConstructor.prototype.other = 'foo';
+	// Excluded during in-browser testing with mocha
+	if (util) {
+		it('should (somewhat) work with node.js\'s util.inherits function', function () {
+			var testSuperConstructor = function(o){ this.result = o.a + o.b + o.c; }
+			testSuperConstructor.prototype.other = 'foo';
 
-		var superConstructor = new masala(testSuperConstructor, { a: 1, b: undefined, c: undefined });
+			var superConstructor = new masala(testSuperConstructor, { a: 1, b: undefined, c: undefined });
 
-		var testConstructor = function(o) {
-			testConstructor.super_.apply(this, arguments);
-			this.result += 4;
-		}
+			var testConstructor = function(o) {
+				testConstructor.super_.apply(this, arguments);
+				this.result += 4;
+			}
 
-		util.inherits(testConstructor, superConstructor);
+			util.inherits(testConstructor, superConstructor);
 
-		var obj = new testConstructor({ b: 2, c: 3 });
+			var obj = new testConstructor({ b: 2, c: 3 });
 
-		a.equal(obj.result, 10);
-		a.equal(obj.other, 'foo');
-	});
+			assert.equal(obj.result, 10);
+			assert.equal(obj.other, 'foo');
+		});
+	}
 
 	it('should consider null a bound value', function () {
 		var fn = masala(function(o){ return [o.a, o.b]; }, { a: null, b: undefined});
 
 		var values = fn({b: 1});
 
-		a.equal(fn.options.length, 1)
-		a.deepEqual(values, [null, 1]);
+		assert.equal(fn.options.length, 1)
+		assert.deepEqual(values, [null, 1]);
 	});
 
 });
 
-describe('masala.inherits', function () {
+describe('masalassert.inherits', function () {
 	it('should inherit required options from the superConstructor', function () {
 		var testSuperConstructor = function(o){ this.result = o.a + o.b + o.c; }
 		testSuperConstructor.prototype.other = 'foo';
@@ -243,8 +252,8 @@ describe('masala.inherits', function () {
 
 		var obj = sum3({ b: 2 })({c: 3 });
 
-		a.equal(obj.result, 10);
-		a.equal(obj.other, 'foo');
+		assert.equal(obj.result, 10);
+		assert.equal(obj.other, 'foo');
 	});
 
 	it('should merge new options with the inherit required options from the superConstructor', function () {
@@ -262,7 +271,7 @@ describe('masala.inherits', function () {
 
 		var obj = sum3({ b: 2 })({c: 3 });
 
-		a.equal(obj.result, 6);
-		a.equal(obj.other, 'foo');
+		assert.equal(obj.result, 6);
+		assert.equal(obj.other, 'foo');
 	});
 });
