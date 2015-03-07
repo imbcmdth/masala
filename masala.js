@@ -68,15 +68,67 @@
 			return letters;
 		}
 
+		function stackToArray (stackTrace) {
+			return stackTrace.split('\n');
+		}
+
+		// Removes everything before up-to and including the first line containing 
+		// "at" (chrome, ie) or "@" (firefox) which removes the parts inside the
+		// masla library functions from the stack trace
+		function trimPreStack (stackTrace) {
+			var arrayStack = stackToArray(stackTrace);
+			var trimPoint = 0;
+
+			for (var i = 0; i < arrayStack.length; i++) {
+				if (/at|@/.test(arrayStack[i])) {
+					trimPoint = i;
+					break;
+				}
+			}
+
+			return arrayStack.slice(trimPoint + 1);
+		}
+
+		// Removes everything after and including the first "sauce" line.
+		// Every line remaining are the parts of the call stack including the masala'd
+		// function and everything *after* it.
+		function trimThrownStack (stackTrace) {
+			var arrayStack = stackToArray(stackTrace);
+			var trimPoint = 0;
+
+			for (var i = 0; i < arrayStack.length; i++) {
+				if (/sauce/.test(arrayStack[i])) {
+					trimPoint = i;
+					break;
+				}
+			}
+
+			return arrayStack.slice(0, trimPoint);
+		}
+
+		function formatStackTrace (preError, thrownError) {
+			var preStackTrace = trimPreStack(preError.stack);
+			var postStackTrace = trimThrownStack(thrownError.stack);
+
+			thrownError.stack = postStackTrace.concat(preStackTrace).join('\n');
+			return thrownError;
+		}
+
 		function wrapFunctionWithArity (arity, name, callback) {
 			var argList = makeArguments(arity);
 			var functionCode = 'return false || function ';
 			functionCode += name + '(';
 			functionCode += argList.join(', ') + ') {\n';
-			functionCode += 'return fn.apply(this, arguments);\n';
+			// In IE, you need to throw the error to have the engine fill `Error.stack`
+			functionCode += 'var preError; try{ throw new Error(); } catch(e) { preError = e; }\n';
+			functionCode += 'try {\n';
+			functionCode += '  return fn.apply(this, arguments);\n';
+			functionCode += '} catch(thrownError) {\n';
+			functionCode += '  throw formatStackTrace(preError, thrownError);\n';
+			functionCode += '}\n';
 			functionCode += '};'
 
-			return Function("fn", functionCode)(callback);
+			return Function('fn', 'formatStackTrace', functionCode)(callback, formatStackTrace);
 		}
 
 		function genSauce (fn, optsPosition, existingOpts, optsRemaining, args, arity, isConstructor) {
